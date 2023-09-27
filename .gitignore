@@ -169,6 +169,7 @@ run_example
 
 tests/17DRP5sb8fy
 /data/datasets/
+/data/humanoids/
 /data/objects/
 /data/scene_datasets/
 /data/versioned_data/
@@ -197,3 +198,5 @@ data/fairmotion/
 pre-commit-deps.txt
 
 tools/qa_scenes/qa_scenes_output/
+
+data/replica_cad

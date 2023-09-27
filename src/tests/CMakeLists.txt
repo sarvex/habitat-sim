@@ -2,10 +2,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-find_package(Magnum REQUIRED DebugTools AnyImageConverter AnySceneImporter)
+find_package(
+  Magnum
+  REQUIRED
+  DebugTools
+  AnyImageConverter
+  AnySceneImporter
+  AnyImageImporter
+)
 find_package(
   MagnumPlugins REQUIRED GltfImporter StbImageImporter KtxImporter
-  OPTIONAL_COMPONENTS GltfSceneConverter KtxImageConverter
+  OPTIONAL_COMPONENTS GltfSceneConverter KtxImageConverter StanfordImporter
+                      OpenExrImporter OpenExrImageConverter
 )
 
 if(BUILD_WITH_BACKGROUND_RENDERER)
@@ -83,6 +91,25 @@ target_include_directories(DrawableTest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 corrade_add_test(GeoTest GeoTest.cpp LIBRARIES geo)
 
 corrade_add_test(
+  GfxBatchHbaoTest
+  GfxBatchHbaoTest.cpp
+  LIBRARIES
+  gfx_batch
+  Magnum::DebugTools
+  Magnum::OpenGLTester
+  Magnum::MeshTools
+  Magnum::AnyImageConverter
+  Magnum::AnyImageImporter
+  Magnum::AnySceneImporter
+  MagnumPlugins::OpenExrImageConverter
+  MagnumPlugins::OpenExrImporter
+  MagnumPlugins::StanfordImporter
+  MagnumPlugins::StbImageImporter
+  MagnumPlugins::StbImageConverter
+)
+target_include_directories(GfxBatchHbaoTest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+corrade_add_test(
   GfxReplayTest
   GfxReplayTest.cpp
   LIBRARIES
@@ -100,6 +127,7 @@ if(BUILD_WITH_BACKGROUND_RENDERER)
     assets
     gfx
     gfx_batch
+    physics
     sim
     MagnumPlugins::OpenExrImageConverter
     MagnumPlugins::OpenExrImporter
@@ -160,6 +188,7 @@ corrade_add_test(
   scene
   assets
   sim
+  physics
 )
 target_include_directories(ReplicaSceneTest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
