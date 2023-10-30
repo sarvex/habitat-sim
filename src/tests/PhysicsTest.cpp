@@ -86,7 +86,7 @@ struct PhysicsTest : Cr::TestSuite::Tester {
       stageAttributesMgr->setCurrPhysicsManagerAttributesHandle(
           physicsManagerAttributes->getHandle());
     }
-    // create scene instance attributes
+    // create Scene Instance Attributes
     esp::metadata::attributes::SceneInstanceAttributes::cptr
         curSceneInstanceAttributes =
             metadataMediator_->getSceneInstanceAttributesByName(stageFile);
@@ -910,7 +910,7 @@ void PhysicsTest::testVelocityControl() {
       (objectWrapper->getTranslation() - posGroundTruth).length(), errorEps,
       Cr::TestSuite::Compare::LessOrEqual);
   Magnum::Rad angleError =
-      Magnum::Math::angle(objectWrapper->getRotation(), qGroundTruth);
+      Magnum::Math::halfAngle(objectWrapper->getRotation(), qGroundTruth);
 
   CORRADE_COMPARE_AS(float(angleError), errorEps,
                      Cr::TestSuite::Compare::LessOrEqual);
@@ -936,8 +936,8 @@ void PhysicsTest::testVelocityControl() {
         (objectWrapper->getTranslation() - kinematicResult.translation)
             .length(),
         errorEps, Cr::TestSuite::Compare::LessOrEqual);
-    angleError = Magnum::Math::angle(objectWrapper->getRotation(),
-                                     kinematicResult.rotation);
+    angleError = Magnum::Math::halfAngle(objectWrapper->getRotation(),
+                                         kinematicResult.rotation);
     CORRADE_COMPARE_AS(float(angleError), errorEps,
                        Cr::TestSuite::Compare::LessOrEqual);
 
@@ -979,7 +979,7 @@ void PhysicsTest::testVelocityControl() {
       (objectWrapper->getTranslation() - posLocalGroundTruth).length(),
       errorEps, Cr::TestSuite::Compare::LessOrEqual);
   Magnum::Rad angleErrorLocal =
-      Magnum::Math::angle(objectWrapper->getRotation(), qLocalGroundTruth);
+      Magnum::Math::halfAngle(objectWrapper->getRotation(), qLocalGroundTruth);
 
   CORRADE_COMPARE_AS(float(angleErrorLocal), errorEps,
                      Cr::TestSuite::Compare::LessOrEqual);

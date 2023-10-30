@@ -15,8 +15,6 @@
 namespace esp {
 namespace metadata {
 namespace managers {
-using core::managedContainers::ManagedFileBasedContainer;
-using core::managedContainers::ManagedObjectAccess;
 
 /**
  * @brief single instance class managing templates describing physical objects
@@ -195,7 +193,7 @@ class ObjectAttributesManager
    * attributesManager-specific upon template removal, such as removing a
    * specific template handle from the list of file-based template handles in
    * ObjectAttributesManager.  This should only be called @ref
-   * esp::core::ManagedContainerBase.
+   * esp::core::managedContainers::ManagedContainerBase.
    *
    * @param templateID the ID of the template to remove
    * @param templateHandle the string key of the attributes desired.

@@ -20,9 +20,10 @@
 
 #include "Asset.h"
 #include "MeshMetaData.h"
+#include "RigManager.h"
 #include "esp/gfx/Drawable.h"
 #include "esp/gfx/ShaderManager.h"
-#include "esp/physics/configure.h"
+#include "esp/gfx/SkinData.h"
 
 #include "esp/metadata/attributes/AttributesEnumMaps.h"
 
@@ -93,6 +94,9 @@ using metadata::attributes::ObjectInstanceShaderType;
  */
 class ResourceManager {
  public:
+  /**
+   * @brief Whether the renderer should be created or not.
+   */
   bool getCreateRenderer() const;
 
   /** @brief Stores references to a set of drawable elements */
@@ -108,7 +112,7 @@ class ResourceManager {
   ~ResourceManager();
 
   /**
-   * @brief This function will build the various @ref Importers used by the
+   * @brief This function will build the various Magnum importers used by the
    * system.
    */
   void buildImporters();
@@ -165,8 +169,8 @@ class ResourceManager {
   void buildSemanticColorMap();
 
   /**
-   * @brief Build @ref semanticColorAsInt_ (array of colors as integers) from
-   * the current @ref semanticColorMapBeingUsed_ map. The @ref
+   * @brief Build @p semanticColorAsInt_ (array of colors as integers) from
+   * the current @p semanticColorMapBeingUsed_ map. The @p
    * semanticColorAsInt_ is used when building the color matrix for conversion
    * of colors found in semantic textures to their semantic IDs. When semantic
    * textures are preprocessed, this will not need to be performed.
@@ -206,12 +210,12 @@ class ResourceManager {
    * If parent and drawables are not specified, the assets are loaded, but no
    * new @ref gfx::Drawable is added for the scene (i.e. it will not be
    * rendered).
-   * @param stageAttributes The @ref StageAttributes that describes the
+   * @param stageAttributes The @ref metadata::attributes::StageAttributes that describes the
    * stage
-   * @param stageInstanceAttributes The @ref SceneObjectInstanceAttributes that
+   * @param stageInstanceAttributes The @ref metadata::attributes::SceneObjectInstanceAttributes that
    * describes this particular instance of the stage.  If nullptr then not
    * created by SceneInstanceAttributes.
-   * @param _physicsManager The currently defined @ref physics::PhysicsManager.
+   * @param _physicsManager The currently defined @ref esp::physics::PhysicsManager.
    * @param sceneManagerPtr Pointer to scene manager, to fetch drawables and
    * parent node.
    * @param [out] activeSceneIDs active scene ID is in idx 0, if semantic scene
@@ -330,7 +334,7 @@ class ResourceManager {
   const MeshMetaData& getMeshMetaData(const std::string& metaDataName) const;
 
   /**
-   * @brief Get a named @ref LightSetup
+   * @brief Get a named @ref esp::gfx::LightSetup
    *
    * @param key The key identifying the light setup in shaderManager_.
    * @return The LightSetup object.
@@ -341,13 +345,13 @@ class ResourceManager {
   }
 
   /**
-   * @brief Set a named @ref LightSetup
+   * @brief Set a named @ref esp::gfx::LightSetup
    *
-   * If this name already exists, the @ref LightSetup is updated and all @ref
+   * If this name already exists, the @ref esp::gfx::LightSetup is updated and all @ref
    * Drawables using this setup are updated.
    *
    * @param setup Light setup this key will now reference
-   * @param key Key to identify this @ref LightSetup
+   * @param key Key to identify this @ref esp::gfx::LightSetup
    */
   void setLightSetup(gfx::LightSetup setup,
                      const Mn::ResourceKey& key = Mn::ResourceKey{
@@ -395,7 +399,7 @@ class ResourceManager {
    * child.
    * @param drawables The @ref DrawableGroup with which the object @ref
    * gfx::Drawable will be rendered.
-   * @param lightSetupKey The @ref LightSetup key that will be used
+   * @param lightSetupKey The @ref esp::gfx::LightSetup key that will be used
    * for the added component.
    * @param[out] visNodeCache Cache for pointers to all nodes created as the
    * result of this process.
@@ -431,23 +435,14 @@ class ResourceManager {
    * @param meshAttributeFlags flags for the attributes of the render mesh
    * @param node The @ref scene::SceneNode to which the drawable will be
    * attached.
-   * @param lightSetupKey The @ref LightSetup key that will be used
-   * for the drawable.
-   * @param materialKey The @ref MaterialData key that will be used
-   * for the drawable.
-   * @param group Optional @ref DrawableGroup with which the render the @ref
-   * gfx::Drawable.
+   * @param drawableCfg The @ref esp::gfx::DrawableConfiguration that describes
+   * the drawable being created.
    */
 
   void createDrawable(Mn::GL::Mesh* mesh,
                       gfx::Drawable::Flags& meshAttributeFlags,
                       scene::SceneNode& node,
                       gfx::DrawableConfiguration& drawableCfg);
-
-  // const Mn::ResourceKey& lightSetupKey,
-  // const Mn::ResourceKey& materialKey,
-  // DrawableGroup* group = nullptr,
-  // const std::shared_ptr<gfx::InstanceSkinData>& skinData = nullptr);
 
   /**
    * @brief Remove the specified primitive mesh.
@@ -593,9 +588,14 @@ class ResourceManager {
   bool loadRenderAsset(const AssetInfo& info);
 
   /**
-   * @brief get the shader manager
+   * @brief Get the shader manager.
    */
   gfx::ShaderManager& getShaderManager() { return shaderManager_; }
+
+  /**
+   * @brief Get the rig manager.
+   */
+  RigManager& getRigManager() { return rigManager_; }
 
   /**
    * @brief Build data for a report for semantic mesh connected components based
@@ -680,7 +680,7 @@ class ResourceManager {
    * @param filename the name of the file describing this mesh
    * @param objectAttributes the object attributes owning
    * this mesh.
-   * @param assetType either "render" or "collision" (for error log output)
+   * @param meshType either "render" or "collision" (for error log output)
    * @param forceFlatShading whether to force this asset to be rendered via
    * flat shading.
    * @return whether or not the mesh was loaded successfully
@@ -693,20 +693,33 @@ class ResourceManager {
       bool forceFlatShading);
 
   /**
-   * @brief Build a primitive asset based on passed template parameters.  If
-   * exists already, does nothing.  Will use primitiveImporter_ to call
-   * appropriate method to construct asset.
+   * @brief Build a primitive asset based on the template parameters encoded in
+   * @p primTemplateHandle , using the predefined material referenced by
+   * DEFAULT_MATERIAL_KEY. If primitive asset exists already, does nothing. Will
+   * use primitiveImporter_ to call appropriate method to construct asset.
    * @param primTemplateHandle the handle referring to the attributes describing
    * primitive to instantiate
    */
   void buildPrimitiveAssetData(const std::string& primTemplateHandle);
 
   /**
-   * @brief this will build a Phong @ref Magnum::Trade::MaterialData using
-   * default attributes from deprecated/removed esp::gfx::PhongMaterialData.
-   * @return The new phong color populated with default values
+   * @brief Build a primitive asset based on passed template parameters and
+   * passed material key. If exists already, does nothing. Will use
+   * primitiveImporter_ to call appropriate method to construct asset.
+   * @param primTemplateHandle the handle referring to the attributes describing
+   * primitive to instantiate
+   * @param materialKey The key to the existing material being used for this
+   * primitive.
    */
-  Mn::Trade::MaterialData buildDefaultPhongMaterial();
+  void buildPrimitiveAssetData(const std::string& primTemplateHandle,
+                               const std::string& materialKey);
+  /**
+   * @brief this will build a MaterialData compatible with Flat, Phong and
+   * PBR @ref Magnum::Trade::MaterialData, using default attributes
+   * from deprecated/removed habitat material default values.
+   * @return The new material populated with default values
+   */
+  Mn::Trade::MaterialData buildDefaultMaterial();
 
   /**
    * @brief Define and set user-defined attributes for the passed
@@ -781,7 +794,7 @@ class ResourceManager {
    * the meshes, textures, materials, and component hierarchy of the asset.
    * @param parent The @ref scene::SceneNode of which the component will be a
    * child.
-   * @param lightSetupKey The @ref LightSetup key that will be used
+   * @param lightSetupKey The @ref esp::gfx::LightSetup key that will be used
    * for the added component.
    * @param drawables The @ref DrawableGroup with which the component will be
    * rendered.
@@ -818,9 +831,9 @@ class ResourceManager {
    * @param skinData Structure holding the skin and rig configuration for the
    * instance.
    */
-  void mapSkinnedModelToArticulatedObject(
+  void mapSkinnedModelToRig(
       const MeshTransformNode& meshTransformNode,
-      const std::shared_ptr<physics::ArticulatedObject>& rig,
+      const gfx::Rig& rig,
       const std::shared_ptr<gfx::InstanceSkinData>& skinData);
 
   /**
@@ -1111,6 +1124,11 @@ class ResourceManager {
   void initDefaultMaterials();
 
   /**
+   * @brief Retrieve the shader type to use for the various default materials.
+   */
+  ObjectInstanceShaderType getDefaultMaterialShaderType();
+
+  /**
    * @brief Checks if light setup is compatible with loaded asset
    */
   bool isLightSetupCompatible(const LoadedAssetData& loadedAssetData,
@@ -1202,6 +1220,12 @@ class ResourceManager {
    */
   gfx::ShaderManager shaderManager_;
 
+  /**
+   * @brief The @ref RigManager used to store rig information for
+   * skinned drawables created by this ResourceManager
+   */
+  RigManager rigManager_;
+
   // ======== Metadata, File and primitive importers ========
   /**
    * @brief A reference to the MetadataMediator managing all the metadata
@@ -1251,11 +1275,17 @@ class ResourceManager {
    * @brief Colormap to use for visualizing currently loaded semantic scene.
    */
   std::vector<Mn::Vector3ub> semanticColorMapBeingUsed_{};
+
+  /**
+   * @brief Cache semantic colors as ints.
+   */
   std::vector<uint32_t> semanticColorAsInt_{};
 
   // ======== Physical parameter data ========
 
-  //! tracks primitive mesh ids
+  /**
+   * @brief tracks primitive mesh ids
+   */
   int nextPrimitiveMeshId = 0;
   /**
    * @brief Primitive meshes available for instancing via @ref
