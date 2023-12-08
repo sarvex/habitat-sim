@@ -87,6 +87,7 @@ def test_pyrobot_noisy_actions(noise_multiplier, robot, controller):
     )
     agent = habitat_sim.Agent(scene_graph.get_root_node().create_child(), agent_config)
 
+    EPS = 5e-2
     for base_action in {act.replace("noisy_", "") for act in agent_config.action_space}:
         state = agent.state
         state.rotation = qt.quaternion(1, 0, 0, 0)
@@ -106,11 +107,11 @@ def test_pyrobot_noisy_actions(noise_multiplier, robot, controller):
 
         delta_translations_arr = np.stack(delta_translations)
         delta_rotations_arr = np.stack(delta_rotations)
-        if "move" in base_action:
-            noise_model = pyrobot_noise_models[robot][controller].linear_motion
-        else:
-            noise_model = pyrobot_noise_models[robot][controller].rotational_motion
-        EPS = 5e-2
+        noise_model = (
+            pyrobot_noise_models[robot][controller].linear_motion
+            if "move" in base_action
+            else pyrobot_noise_models[robot][controller].rotational_motion
+        )
         assert (
             np.linalg.norm(
                 noise_model.linear.mean * noise_multiplier

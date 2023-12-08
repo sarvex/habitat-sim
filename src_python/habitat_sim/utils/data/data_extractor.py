@@ -22,9 +22,7 @@ def make_pose_extractor(name: str) -> Callable[..., PoseExtractor]:
     """
 
     model = registry.get_pose_extractor(name)
-    assert model is not None, "Could not find a pose extractor for name '{}'".format(
-        name
-    )
+    assert model is not None, f"Could not find a pose extractor for name '{name}'"
 
     return model
 
@@ -201,17 +199,16 @@ class ImageExtractor:
     def set_mode(self, mode: str) -> None:
         r"""Sets the mode of the simulator. This controls which poses to use; train, test, or all (full)"""
         mymode = mode.lower()
-        if mymode not in ["full", "train", "test"]:
+        if mymode in {"full", "train", "test"}:
+            self.mode = mymode
+        else:
             raise Exception(
                 f'Mode {mode} is not a valid mode for ImageExtractor. Please enter "full, train, or test"'
             )
 
-        self.mode = mymode
-
     def get_semantic_class_names(self) -> List[str]:
         r"""Returns a list of english class names in the scene(s). E.g. ['wall', 'ceiling', 'chair']"""
-        class_names = list(set(self.instance_id_to_name.values()))
-        return class_names
+        return list(set(self.instance_id_to_name.values()))
 
     def _preprocessing(self, sim, scene_filepaths, meters_per_pixel):
         tdv_fp_ref = []

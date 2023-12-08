@@ -79,10 +79,7 @@ class PoseExtractor:
         self, point: Tuple[int, int], labels: List[float], view: ndarray
     ) -> Tuple[bool, float64]:
         r, c = point
-        is_interesting = False
-        if view[r][c] in labels:
-            is_interesting = True
-
+        is_interesting = view[r][c] in labels
         return is_interesting, view[r][c]
 
     def _compute_quat(self, cam_normal: ndarray) -> quaternion:
@@ -204,11 +201,7 @@ class ClosestPointExtractor(PoseExtractor):
             visited.add(cur)
             is_point_of_interest, label = self._is_point_of_interest(cur, labels, view)
             if is_point_of_interest:
-                if layer > dist / 2:
-                    return cur, label
-                else:
-                    return None, None
-
+                return (cur, label) if layer > dist / 2 else (None, None)
             for n in get_neighbors(cur):
                 if n not in visited and is_valid(*n):
                     q.append((n, layer + step))
@@ -261,7 +254,6 @@ class PanoramaExtractor(PoseExtractor):
         in_bounds_of_topdown_view = lambda row, col: 0 <= row < len(
             view
         ) and 0 <= col < len(view[0])
-        point_label_pairs = []
         r, c = point
         neighbor_dist = dist // 2
         neighbors = [
@@ -275,10 +267,8 @@ class PanoramaExtractor(PoseExtractor):
             (r + neighbor_dist, c + neighbor_dist),
         ]
 
-        for n in neighbors:
-            # Only add the neighbor point if it is navigable. This prevents camera poses that
-            # are just really close-up photos of some object
-            if in_bounds_of_topdown_view(*n) and self._valid_point(*n, view):
-                point_label_pairs.append((n, 0.0))
-
-        return point_label_pairs
+        return [
+            (n, 0.0)
+            for n in neighbors
+            if in_bounds_of_topdown_view(*n) and self._valid_point(*n, view)
+        ]

@@ -312,17 +312,13 @@ def make_cfg(settings):
     sim_cfg.scene_dataset_config_file = settings["scene_dataset"]
     sim_cfg.enable_physics = settings["enable_physics"]
 
-    # Note: all sensors must have the same resolution
-    sensor_specs = []
-
     color_sensor_spec = habitat_sim.CameraSensorSpec()
     color_sensor_spec.uuid = "color_sensor"
     color_sensor_spec.sensor_type = habitat_sim.SensorType.COLOR
     color_sensor_spec.resolution = [settings["height"], settings["width"]]
     color_sensor_spec.position = [0.0, settings["sensor_height"], 0.0]
     color_sensor_spec.sensor_subtype = habitat_sim.SensorSubType.PINHOLE
-    sensor_specs.append(color_sensor_spec)
-
+    sensor_specs = [color_sensor_spec]
     depth_sensor_spec = habitat_sim.CameraSensorSpec()
     depth_sensor_spec.uuid = "depth_sensor"
     depth_sensor_spec.sensor_type = habitat_sim.SensorType.DEPTH
@@ -415,13 +411,11 @@ agent.set_state(agent_state)
 agent_state = agent.get_state()
 print("agent_state: position", agent_state.position, "rotation", agent_state.rotation)
 
-# %%
-total_frames = 0
 action_names = list(cfg.agents[sim_settings["default_agent"]].action_space.keys())
 
 max_frames = 5
 
-while total_frames < max_frames:
+for _ in range(max_frames):
     action = random.choice(action_names)
     print("action", action)
     observations = sim.step(action)
@@ -431,8 +425,6 @@ while total_frames < max_frames:
 
     if display:
         display_sample(rgb, semantic, depth)
-
-    total_frames += 1
 
 
 # %% [markdown]

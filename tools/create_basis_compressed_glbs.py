@@ -89,12 +89,12 @@ def build_parser(
 
 
 def extract_images(mesh_name: str) -> None:
-    output_dir = osp.splitext(mesh_name)[0] + "_hab_basis_tool"
+    output_dir = f"{osp.splitext(mesh_name)[0]}_hab_basis_tool"
     os.makedirs(output_dir, exist_ok=True)
 
     tool = osp.join(TOOL_PATH, "glb2gltf.py")
     mesh_name = osp.abspath(mesh_name)
-    output_name = osp.splitext(osp.basename(mesh_name))[0] + ".gltf"
+    output_name = f"{osp.splitext(osp.basename(mesh_name))[0]}.gltf"
 
     subprocess.check_output(
         shlex.split(f"{tool} {mesh_name} --extract-images --output {output_name}"),
@@ -103,7 +103,7 @@ def extract_images(mesh_name: str) -> None:
 
 
 def img_name_to_basis(img: str) -> str:
-    return osp.splitext(img)[0] + ".basis"
+    return f"{osp.splitext(img)[0]}.basis"
 
 
 def convert_image_to_basis(args: Tuple[str, str, int]) -> None:
@@ -160,7 +160,7 @@ def _gltf2unlit(gltf_name: str):
 
 def package_meshes(args: Tuple[str, bool]) -> None:
     mesh_name, convert_to_unlit = args
-    output_dir = osp.splitext(mesh_name)[0] + "_hab_basis_tool"
+    output_dir = f"{osp.splitext(mesh_name)[0]}_hab_basis_tool"
     base_mesh_name = osp.splitext(osp.basename(mesh_name))[0]
 
     tool = osp.join(TOOL_PATH, "gltf2basis.py")
@@ -194,9 +194,9 @@ def finalize(output_folder: str, rename_basis: bool) -> None:
                 # print(f"...skipping {basis_mesh}")
                 continue
 
-            mesh_name = osp.splitext(osp.splitext(basis_mesh)[0])[0] + ".glb"
+            mesh_name = f"{osp.splitext(osp.splitext(basis_mesh)[0])[0]}.glb"
 
-            shutil.move(mesh_name, mesh_name + ".orig")
+            shutil.move(mesh_name, f"{mesh_name}.orig")
 
             shutil.move(basis_mesh, mesh_name)
 
@@ -208,7 +208,7 @@ def _map_all_and_wait(pool: multiprocessing.Pool, func: Callable, inputs: List[A
 
 
 def _clean(lst: List[str]) -> None:
-    if len(lst) > 0:
+    if lst:
         print("Cleaning...")
 
     for f in tqdm.tqdm(lst):

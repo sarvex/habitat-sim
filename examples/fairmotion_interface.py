@@ -157,7 +157,7 @@ class FairmotionInterface:
             os.makedirs(METADATA_DIR)
 
         # if default file isnt in metadata directory, create it from hardcoded metadata
-        if not os.path.exists(METADATA_DIR + "default.json"):
+        if not os.path.exists(f"{METADATA_DIR}default.json"):
             self.user_metadata = METADATA_DEFAULT_WHEN_MISSING_FILE
             self.save_metadata("default")
 
@@ -190,21 +190,18 @@ class FairmotionInterface:
         """
         data = metadata_dict.copy()
 
-        if to_file:
-            for k, v in data.items():
+        for k, v in data.items():
+            if to_file:
                 if isinstance(v, mn.Quaternion):
-                    q_list = [list(v.vector)]
-                    q_list.append(v.scalar)
+                    q_list = [list(v.vector), v.scalar]
                     data[k] = q_list
                 elif isinstance(v, mn.Vector3):
                     data[k] = list(v)
 
-        elif not to_file:
-            for k, v in data.items():
-                if k == "rotation":
-                    data[k] = mn.Quaternion(v)
-                elif k == "translation":
-                    data[k] = mn.Vector3(v)
+            elif k == "rotation":
+                data[k] = mn.Quaternion(v)
+            elif k == "translation":
+                data[k] = mn.Vector3(v)
         return data
 
     def save_metadata(self, file: str):
@@ -225,11 +222,11 @@ class FairmotionInterface:
                     # file is not a file path, we need to aim it at our directory
                     if ".json" not in file:
                         # add file type
-                        file = file + ".json"
+                        file = f"{file}.json"
                     file = METADATA_DIR + file
         else:
             # generate filename from timestamp
-            file = METADATA_DIR + "user_" + time.strftime("%Y-%m-%d_%H-%M-%S")
+            file = f"{METADATA_DIR}user_" + time.strftime("%Y-%m-%d_%H-%M-%S")
 
         logger.info(f"Saving data to file: {file}")
 
@@ -539,7 +536,7 @@ class FairmotionInterface:
                         joints = [joints]
 
                     # check if the joint names in this list are valid joints in the model
-                    if not all(x in joint_list for x in joints):
+                    if any(x not in joint_list for x in joints):
                         logger.error(f"Error: Invalid joint names passed -> {joints}")
                         continue
 
@@ -599,13 +596,12 @@ class FairmotionInterface:
         Accepts an object id and returns True if the obj_id belongs to an object
         owned by this Fairmotion character.
         """
-        # checking our model links
-        if self.model and obj_id in self.model.link_object_ids:
-            return True
+        if self.model:
+            if obj_id in self.model.link_object_ids:
+                return True
 
-        # checking our model
-        if self.model and obj_id is self.model.object_id:
-            return True
+            if obj_id is self.model.object_id:
+                return True
 
         # checking all key frame models
         if any(
@@ -615,10 +611,7 @@ class FairmotionInterface:
             return True
 
         # checking all key frame models
-        if any(obj_id == to for to in self.traj_ids):
-            return True
-
-        return False
+        return any((obj_id == to for to in self.traj_ids))
 
     def push_random_action_order(self) -> None:
         """
@@ -720,11 +713,11 @@ class FairmotionInterface:
             # track whether action is finised being processed
             finished_processing = False
 
-            while Timer.check() < (THRESHOLD / self.draw_fps):
-                # Tail-end Pose Interpolation #
-                margin_r = 0.10  # angular
-                margin_d = 0.15  # linear
+            # Tail-end Pose Interpolation #
+            margin_r = 0.10  # angular
+            margin_d = 0.15  # linear
 
+            while Timer.check() < (THRESHOLD / self.draw_fps):
                 # either take argument value for path_time or continue with cycle
                 path_.time = path_.time + (1.0 / self.draw_fps)
 
@@ -822,7 +815,6 @@ class FairmotionInterface:
                 self.incomplete_order.append(action_order)
                 self.incomplete_order.append(path_)
 
-        ################# CODE FOR SCENIC MOTION #################
         elif action_order.motion_data.type == MType.SCENIC:
             # cache last location
             final_char_location = self.last_seq_location

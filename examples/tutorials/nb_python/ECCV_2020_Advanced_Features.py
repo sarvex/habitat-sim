@@ -117,14 +117,13 @@ if "sim" not in globals():
 # first entry being the value and the second being whether the property is
 # editable and the third being the type.
 def build_dict_of_Default_attrs(template):
-    res_dict = {
+    return {
         "handle": (template.handle, True, "string"),
         # Read-only values
         "template_id": (template.template_id, False, "int"),
         "template_class": (template.template_class, False, "string"),
         "file_directory": (template.file_directory, False, "string"),
     }
-    return res_dict
 
 
 # This method builds a dictionary of k-v pairs of attribute property names and
@@ -319,8 +318,7 @@ def build_dict_of_Cone_prim_attrs(cone_template):
 # the first entry being the value,the second being whether the property is
 # editable and the third being the type.
 def build_dict_of_Cube_prim_attrs(cube_template):
-    res_dict = build_dict_of_prim_attrs(cube_template)
-    return res_dict
+    return build_dict_of_prim_attrs(cube_template)
 
 
 # This method will build a dict containing k-v pairs of attribute property names
@@ -348,8 +346,7 @@ def build_dict_of_Icosphere_prim_attrs(icosphere_template):
 # the first entry being the value,the second being whether the property is
 # editable and the third being the type.
 def build_dict_of_UVSphere_prim_attrs(uvsphere_template):
-    res_dict = build_dict_of_prim_attrs(uvsphere_template)
-    return res_dict
+    return build_dict_of_prim_attrs(uvsphere_template)
 
 
 # This method will deduce the appropriate template type and build the subsequent
@@ -377,7 +374,7 @@ def build_dict_from_template(template):
         return build_dict_of_Icosphere_prim_attrs(template)
     if "UVSpherePrimitiveAttributes" in template_class:
         return build_dict_of_UVSphere_prim_attrs(template)
-    print("Unknown template type : %s " % template_class)
+    print(f"Unknown template type : {template_class} ")
     return None
 
 
@@ -391,12 +388,10 @@ def set_template_properties_from_dict(template, template_dict):
 # This will display all the properties of an attributes template
 def show_template_properties(template):
     template_dict = build_dict_from_template(template)
-    print("Template {} has : ".format(template.handle))
+    print(f"Template {template.handle} has : ")
     for k, v in template_dict.items():
         print(
-            "\tProperty {} has value {} of type {} that is editable : {}".format(
-                k, v[0], v[2], v[1]
-            )
+            f"\tProperty {k} has value {v[0]} of type {v[2]} that is editable : {v[1]}"
         )
 
 
@@ -501,7 +496,7 @@ def make_cfg(settings):
 
 
 def make_default_settings():
-    settings = {
+    return {
         "width": 720,  # Spatial resolution of the observations
         "height": 544,
         "scene": "./data/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb",  # Scene path
@@ -516,7 +511,6 @@ def make_default_settings():
         "seed": 1,
         "enable_physics": True,  # enable dynamics simulation
     }
-    return settings
 
 
 def make_simulator_from_settings(sim_settings):
@@ -565,7 +559,7 @@ def make_simulator_from_settings(sim_settings):
 
 def simulate(sim, dt=1.0, get_frames=True):
     # simulate dt seconds at 60Hz to the nearest fixed timestep
-    print("Simulating " + str(dt) + " world seconds.")
+    print(f"Simulating {str(dt)} world seconds.")
     observations = []
     start_time = sim.get_world_time()
     while sim.get_world_time() < start_time + dt:
@@ -578,11 +572,11 @@ def simulate(sim, dt=1.0, get_frames=True):
 # Save sensor and agent state to a dictionary, so that initial values can be reset
 # Used at beginning of cell that directly modifies camera (i.e. tracking an object)
 def init_camera_track_config(sim, sensor_name="color_sensor_1st_person", agent_ID=0):
-    init_state = {}
     visual_sensor = sim._sensors[sensor_name]
-    # save ref to sensor being used
-    init_state["visual_sensor"] = visual_sensor
-    init_state["position"] = np.array(visual_sensor._spec.position)
+    init_state = {
+        "visual_sensor": visual_sensor,
+        "position": np.array(visual_sensor._spec.position),
+    }
     init_state["orientation"] = np.array(visual_sensor._spec.orientation)
     # set the color sensor transform to be the agent transform
     visual_sensor._spec.position = np.array([0, 0, 0])
@@ -745,7 +739,7 @@ def on_prim_ddl_change(ddl_values):
 # Build a dropdown list holding obj_handles and set its event handler
 def set_handle_ddl_widget(obj_handles, handle_types, sel_handle, on_change):
     sel_handle = obj_handles[0]
-    descStr = handle_types + " Template Handles:"
+    descStr = f"{handle_types} Template Handles:"
     style = {"description_width": "300px"}
     obj_ddl = widgets.Dropdown(
         options=obj_handles,
@@ -761,11 +755,10 @@ def set_handle_ddl_widget(obj_handles, handle_types, sel_handle, on_change):
 
 
 def set_button_launcher(desc):
-    button = widgets.Button(
+    return widgets.Button(
         description=desc,
         layout={"width": "max-content"},
     )
-    return button
 
 
 def make_sim_and_vid_button(prefix, dt=1.0):

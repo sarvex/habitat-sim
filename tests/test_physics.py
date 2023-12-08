@@ -902,9 +902,7 @@ def test_articulated_object_maintain_link_order():
             "relbow",
             "rwrist",
         ]
-        link_names = []
-        for link_ix in range(ao.num_links):
-            link_names.append(ao.get_link_name(link_ix))
+        link_names = [ao.get_link_name(link_ix) for link_ix in range(ao.num_links)]
         # check the link ordering against ground truth
         assert amass_urdf_link_order == link_names
 
@@ -1051,7 +1049,7 @@ def test_articulated_object_kinematics(test_asset):
         assert np.allclose(robot.joint_positions, invalid_joint_positions, atol=1.0e-3)
         assert robot.auto_clamp_joint_limits == False
         robot.auto_clamp_joint_limits = True
-        assert robot.auto_clamp_joint_limits == True
+        assert robot.auto_clamp_joint_limits
         # taking a single step should clamp positions when auto clamp enabled
         sim.step_physics(-1)
         assert np.all(robot.joint_positions >= lower_pos_limits)
@@ -1334,10 +1332,7 @@ def test_articulated_object_joint_motors(test_asset):
         # setup the camera for debug video
         sim.agents[0].scene_node.translation = [0.0, -1.5, 2.0]
         observations = []
-        target_time = 0.0
-
-        # let the agent drop
-        target_time += 0.2
+        target_time = 0.0 + 0.2
         while sim.get_world_time() < target_time:
             sim.step_physics(1.0 / 60.0)
             if produce_debug_video:
@@ -1345,7 +1340,7 @@ def test_articulated_object_joint_motors(test_asset):
 
         # iterate through links and setup joint motors to hold a rest position
         joint_motor_settings = None
-        print(f" L({-1}): name = {robot.get_link_name(-1)}")
+        print(f" L(-1): name = {robot.get_link_name(-1)}")
         for link_id in robot.get_link_ids():
             print(
                 f" L({link_id}): name = {robot.get_link_name(link_id)} | joint_name = {robot.get_link_joint_name(link_id)}"
@@ -1362,12 +1357,10 @@ def test_articulated_object_joint_motors(test_asset):
                     velocity_gain=0.1,
                     max_impulse=10000.0,
                 )
-            elif (
-                robot.get_link_joint_type(link_id)
-                == habitat_sim.physics.JointType.Prismatic
-                or robot.get_link_joint_type(link_id)
-                == habitat_sim.physics.JointType.Revolute
-            ):
+            elif robot.get_link_joint_type(link_id) in [
+                habitat_sim.physics.JointType.Prismatic,
+                habitat_sim.physics.JointType.Revolute,
+            ]:
                 # construct a single dof JointMotorSettings
                 joint_motor_settings = habitat_sim.physics.JointMotorSettings(
                     position_target=0.0,

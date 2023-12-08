@@ -86,7 +86,7 @@ if len(perfs) > 1:
     avg_fps = 0
     avg_frame_time = 0
     avg_step_time = 0
-    print("all perfs: " + str(perfs))
+    print(f"all perfs: {perfs}")
     for perf in perfs:
         print("----")
         print(perf["time_per_step"])
@@ -97,6 +97,6 @@ if len(perfs) > 1:
     avg_fps /= len(perfs)
     avg_frame_time /= len(perfs)
     avg_step_time /= len(perfs) * len(perfs[0]["time_per_step"])
-    print("Average FPS: " + str(avg_fps))
-    print("Average frame time: " + str(avg_frame_time))
-    print("Average step time: " + str(avg_step_time))
+    print(f"Average FPS: {avg_fps}")
+    print(f"Average frame time: {avg_frame_time}")
+    print(f"Average step time: {str(avg_step_time)}")

@@ -118,11 +118,7 @@ def test_replica_cad_quickstart(args):
     not habitat_sim.bindings.built_with_bullet,
     reason="Bullet physics used for validation.",
 )
-@pytest.mark.parametrize(
-    "args",
-    [
-        ["examples/example.py"] + list(p)
-        for p in powerset(
+@pytest.mark.parametrize("args", [["examples/example.py"] + list(p) for p in powerset(
             [
                 "--compute_shortest_path",
                 "--compute_action_shortest_path",
@@ -131,11 +127,7 @@ def test_replica_cad_quickstart(args):
                 "--depth_sensor",
                 "--recompute_navmesh",
             ]
-        )
-        if not (("--compute_action_shortest_path" in p) and ("--enable_physics" in p))
-    ],
-    ids=str,
-)
+        ) if "--compute_action_shortest_path" not in p or "--enable_physics" not in p], ids=str)
 def test_example_script_with_bullet(args):
     run_main_subproc(args)
 

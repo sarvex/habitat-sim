@@ -41,7 +41,7 @@ def _rotate_local(
 
         if (
             abs(float(rotation.angle())) > 0
-            and 1.0 - abs(rotation.axis().normalized()[axis]) > 1e-3
+            and abs(rotation.axis().normalized()[axis]) < 0.999
         ):
             raise RuntimeError(
                 "Constrained look only works for a singular look action type"

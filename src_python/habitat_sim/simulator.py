@@ -183,9 +183,7 @@ class Simulator(SimulatorBackend):
             agent_ids = cast(List[int], agent_ids)
             return_single = False
         obs = self.get_sensor_observations(agent_ids=agent_ids)
-        if return_single:
-            return obs[agent_ids[0]]
-        return obs
+        return obs[agent_ids[0]] if return_single else obs
 
     def reset_agent(self, agent_id: int) -> None:
         agent = self.get_agent(agent_id)
@@ -235,7 +233,7 @@ class Simulator(SimulatorBackend):
         self._default_agent_id = config.sim_cfg.default_agent_id
 
         self.__sensors: List[Dict[str, Sensor]] = [
-            dict() for i in range(len(config.agents))
+            dict() for _ in range(len(config.agents))
         ]
         self.__last_state = dict()
         for agent_id, agent_cfg in enumerate(config.agents):
@@ -366,14 +364,12 @@ class Simulator(SimulatorBackend):
         # As backport. All Dicts are ordered in Python >= 3.7
         observations: Dict[int, Dict[str, Union[ndarray, "Tensor"]]] = OrderedDict()
         for agent_id in agent_ids:
-            agent_observations: Dict[str, Union[ndarray, "Tensor"]] = {}
-            for sensor_uuid, sensor in self.__sensors[agent_id].items():
-                agent_observations[sensor_uuid] = sensor._get_observation_async()
-
+            agent_observations: Dict[str, Union[ndarray, "Tensor"]] = {
+                sensor_uuid: sensor._get_observation_async()
+                for sensor_uuid, sensor in self.__sensors[agent_id].items()
+            }
             observations[agent_id] = agent_observations
-        if return_single:
-            return next(iter(observations.values()))
-        return observations
+        return next(iter(observations.values())) if return_single else observations
 
     @overload
     def get_sensor_observations(self, agent_ids: int = 0) -> ObservationDict:
@@ -403,21 +399,15 @@ class Simulator(SimulatorBackend):
                 agent_sensorsuite = self.__sensors[agent_id]
                 for _sensor_uuid, sensor in agent_sensorsuite.items():
                     sensor.draw_observation()
-        else:
-            # The batch renderer draws observations from external code.
-            # Sensors are only used as data containers.
-            pass
-
         # Get observations.
         for agent_id in agent_ids:
-            agent_observations: ObservationDict = {}
-            for sensor_uuid, sensor in self.__sensors[agent_id].items():
-                agent_observations[sensor_uuid] = sensor.get_observation()
+            agent_observations: ObservationDict = {
+                sensor_uuid: sensor.get_observation()
+                for sensor_uuid, sensor in self.__sensors[agent_id].items()
+            }
             observations[agent_id] = agent_observations
 
-        if return_single:
-            return next(iter(observations.values()))
-        return observations
+        return next(iter(observations.values())) if return_single else observations
 
     @property
     def _default_agent(self) -> Agent:
@@ -621,9 +611,7 @@ class Sensor:
         )
         assert self._noise_model.is_valid_sensor_type(
             self._spec.sensor_type
-        ), "Noise model '{}' is not valid for sensor '{}'".format(
-            self._spec.noise_model, self._spec.uuid
-        )
+        ), f"Noise model '{self._spec.noise_model}' is not valid for sensor '{self._spec.uuid}'"
 
     def draw_observation(self) -> None:
         # Batch rendering happens elsewhere.
@@ -763,8 +751,7 @@ class Sensor:
 
         # run the simulation
         audio_sensor.runSimulation(self._sim)
-        obs = audio_sensor.getIR()
-        return obs
+        return audio_sensor.getIR()
 
     def close(self) -> None:
         self._sim = None

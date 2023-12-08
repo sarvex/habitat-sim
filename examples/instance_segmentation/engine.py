@@ -53,7 +53,7 @@ def train_one_epoch(
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value:.6f}"))
-    header = "Epoch: [{}]".format(epoch)
+    header = f"Epoch: [{epoch}]"
     epoch_losses = collections.defaultdict(int)
     total_loss = 0
     num_examples = len(data_loader)
@@ -61,18 +61,18 @@ def train_one_epoch(
         images = [image.to(device) for image in images]
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         loss_dict = model(images, targets)
-        losses = sum(loss for loss in loss_dict.values())
+        losses = sum(loss_dict.values())
 
         # reduce losses over all GPUs for logging purposes
         loss_dict_reduced = utils.reduce_dict(loss_dict)
-        losses_reduced = sum(loss for loss in loss_dict_reduced.values())
+        losses_reduced = sum(loss_dict_reduced.values())
         loss_value = losses_reduced.item()
         total_loss += loss_value
         for loss_name, loss_val in loss_dict_reduced.items():
             epoch_losses[loss_name] += loss_val
 
         if not math.isfinite(loss_value):
-            print("Loss is {}, stopping training".format(loss_value))
+            print(f"Loss is {loss_value}, stopping training")
             print(loss_dict_reduced)
             sys.exit(1)
 
@@ -89,7 +89,7 @@ def train_one_epoch(
     for loss_name in epoch_losses:
         epoch_losses[loss_name] = epoch_losses[loss_name] / num_examples
         if writer is not None:
-            writer.add_scalar("Losses/" + loss_name, epoch_losses[loss_name], epoch)
+            writer.add_scalar(f"Losses/{loss_name}", epoch_losses[loss_name], epoch)
 
     if lr_scheduler is not None:
         lr_scheduler.step(epoch_losses["total_loss"])

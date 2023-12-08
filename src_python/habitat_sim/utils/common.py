@@ -28,7 +28,7 @@ def quat_from_coeffs(coeffs: Union[Sequence[float], np.ndarray]) -> qt.quaternio
     """
     quat = qt.quaternion(1, 0, 0, 0)
     quat.real = coeffs[3]
-    quat.imag = coeffs[0:3]
+    quat.imag = coeffs[:3]
     return quat
 
 
@@ -40,7 +40,7 @@ def quat_to_coeffs(quat: qt.quaternion) -> np.ndarray:
         where :math:`q = a + bi + cj + dk`
     """
     coeffs = np.empty(4)
-    coeffs[0:3] = quat.imag
+    coeffs[:3] = quat.imag
     coeffs[3] = quat.real
     return coeffs
 

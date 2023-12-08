@@ -85,7 +85,7 @@ def perform_general_tests(attr_mgr, search_string):
     # attempt to delete
     template3 = attr_mgr.remove_template_by_handle(new_template_handle)
     # verify that template was not deleted
-    assert template3 == None
+    assert template3 is None
     # unlock template
     attr_mgr.set_template_lock(new_template_handle, False)
 

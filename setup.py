@@ -279,8 +279,8 @@ class CMakeBuild(build_ext):
             "-DBUILD_PYTHON_BINDINGS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=" + extdir,
             "-DPYTHON_EXECUTABLE=" + sys.executable,
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS={}".format("OFF" if is_pip() else "ON"),
-            "-DREL_BUILD_RPATH={}".format("OFF" if self.inplace else "ON"),
+            f'-DCMAKE_EXPORT_COMPILE_COMMANDS={"OFF" if is_pip() else "ON"}',
+            f'-DREL_BUILD_RPATH={"OFF" if self.inplace else "ON"}',
         ]
         if args.lto is not None:
             cmake_args += [
@@ -392,7 +392,7 @@ class CMakeBuild(build_ext):
                 cache_contents = f.readlines()
 
             for arg in cmake_args:
-                if arg[0:2] == "-G":
+                if arg[:2] == "-G":
                     continue
 
                 k, v = arg.split("=", 1)
@@ -439,7 +439,7 @@ class CMakeBuild(build_ext):
 
 if __name__ == "__main__":
     assert StrictVersion(
-        "{}.{}".format(sys.version_info[0], sys.version_info[1])
+        f"{sys.version_info[0]}.{sys.version_info[1]}"
     ) >= StrictVersion("3.9"), "Must use python 3.9 or newer"
     with open("./requirements.txt", "r") as f:
         requirements = [l.strip() for l in f.readlines() if len(l.strip()) > 0]

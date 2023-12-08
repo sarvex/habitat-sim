@@ -186,11 +186,11 @@ class PyRobotNoisyActuationSpec(ActuationSpec):
 
     @controller.validator
     def check_controller(self, attribute: Attribute, value: str) -> None:
-        assert value in [
+        assert value in {
             "ILQR",
             "Proportional",
             "Movebase",
-        ], f"{value} not a known controller"
+        }, f"{value} not a known controller"
 
     noise_multiplier: float = 1.0
 

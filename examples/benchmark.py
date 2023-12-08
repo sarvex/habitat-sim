@@ -114,7 +114,7 @@ if __name__ == "__main__":
                 demo_runner = dr.DemoRunner(
                     default_settings, dr.DemoRunnerType.BENCHMARK
                 )
-                print(" ---------------------- %s ------------------------ " % key)
+                print(f" ---------------------- {key} ------------------------ ")
                 settings = default_settings.copy()
                 settings.update(value)
                 perf[key] = demo_runner.benchmark(settings)
@@ -128,9 +128,7 @@ if __name__ == "__main__":
 
     for nproc, performance in performance_all.items():
         print(
-            " ================ Performance (FPS) NPROC={} ===================================".format(
-                nproc
-            )
+            f" ================ Performance (FPS) NPROC={nproc} ==================================="
         )
         title = "Resolution "
         for key in perf:
@@ -148,9 +146,7 @@ if __name__ == "__main__":
         # also print the average time per simulation step (including object perturbations)
         if args.enable_physics:
             print(
-                " ================ Performance (step time: milliseconds) NPROC={} ===================================".format(
-                    nproc
-                )
+                f" ================ Performance (step time: milliseconds) NPROC={nproc} ==================================="
             )
             title = "Resolution "
             for key in perf:
