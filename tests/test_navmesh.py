@@ -78,15 +78,13 @@ def test_recompute_navmesh(test_scene):
 
         # generate random point pairs
         num_samples = 100
-        samples = []
-        for _ in range(num_samples):
-            samples.append(
-                (
-                    sim.pathfinder.get_random_navigable_point(),
-                    sim.pathfinder.get_random_navigable_point(),
-                )
+        samples = [
+            (
+                sim.pathfinder.get_random_navigable_point(),
+                sim.pathfinder.get_random_navigable_point(),
             )
-
+            for _ in range(num_samples)
+        ]
         # compute shortest paths between these points on the loaded navmesh
         loaded_navmesh_path_results = get_shortest_path(sim, samples)
         assert len(sim.pathfinder.build_navmesh_vertices()) > 0
@@ -345,13 +343,13 @@ def test_topdown_map(test_scene):
 
         # cache new ground truth map caches
         filename = osp.join(
-            base_dir, "data/test_assets/" + test_scene_name + "_topdown_binary.npy"
+            base_dir, f"data/test_assets/{test_scene_name}_topdown_binary.npy"
         )
         # np.save(filename, binary_top_down_map)
         binary_topdown_map_cached = np.load(filename)
 
         filename = osp.join(
-            base_dir, "data/test_assets/" + test_scene_name + "_topdown_islands.npy"
+            base_dir, f"data/test_assets/{test_scene_name}_topdown_islands.npy"
         )
         # np.save(filename, island_top_down_map)
         islands_topdown_map_cached = np.load(filename)
@@ -366,5 +364,5 @@ def test_topdown_map(test_scene):
         island_colored_map_image = get_island_colored_map(island_top_down_map)
 
         if generate_test_map_images:
-            island_colored_map_image.save(filename + ".png")
+            island_colored_map_image.save(f"{filename}.png")
             # island_colored_map_image.show()

@@ -85,9 +85,7 @@ class GreedyGeodesicFollower:
         self.agent = agent
         self.last_goal = None
 
-        self.action_mapping = {}
-        self.action_mapping[GreedyFollowerCodes.STOP] = stop_key
-
+        self.action_mapping = {GreedyFollowerCodes.STOP: stop_key}
         key, spec = self._find_action("move_forward")
         self.forward_spec = spec
         self.action_mapping[GreedyFollowerCodes.FORWARD] = (

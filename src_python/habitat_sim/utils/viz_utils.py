@@ -38,13 +38,8 @@ def is_notebook() -> bool:
 
 
 def get_fast_video_writer(video_file: str, fps: int = 60):
-    if (
-        "google.colab" in sys.modules
-        and os.path.splitext(video_file)[-1] == ".mp4"
-        and os.environ.get("IMAGEIO_FFMPEG_EXE") == "/usr/bin/ffmpeg"
-    ):
-        # USE GPU Accelerated Hardware Encoding
-        writer = imageio.get_writer(
+    return (
+        imageio.get_writer(
             video_file,
             fps=fps,
             codec="h264_nvenc",
@@ -54,10 +49,13 @@ def get_fast_video_writer(video_file: str, fps: int = 60):
             ffmpeg_log_level="info",
             output_params=["-minrate", "500k", "-maxrate", "5000k"],
         )
-    else:
-        # Use software encoding
-        writer = imageio.get_writer(video_file, fps=fps)
-    return writer
+        if (
+            "google.colab" in sys.modules
+            and os.path.splitext(video_file)[-1] == ".mp4"
+            and os.environ.get("IMAGEIO_FFMPEG_EXE") == "/usr/bin/ffmpeg"
+        )
+        else imageio.get_writer(video_file, fps=fps)
+    )
 
 
 def save_video(video_file: str, frames, fps: int = 60):
@@ -69,7 +67,7 @@ def save_video(video_file: str, frames, fps: int = 60):
     :param fps: the fps of the video (default 60)
     """
     writer = get_fast_video_writer(video_file, fps=fps)
-    for ob in tqdm(frames, desc="Encoding video:%s" % video_file):
+    for ob in tqdm(frames, desc=f"Encoding video:{video_file}"):
         writer.append_data(ob)
     writer.close()
 
@@ -99,12 +97,11 @@ def display_video(video_file: str, height: int = 400):
                 )
             )
         )
+    elif sys.platform == "win32":
+        os.startfile(video_file)  # type: ignore[attr-defined]
     else:
-        if sys.platform == "win32":
-            os.startfile(video_file)  # type: ignore[attr-defined]
-        else:
-            opener = "open" if sys.platform == "darwin" else "xdg-open"
-            subprocess.call([opener, video_file])
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, video_file])
 
 
 def observation_to_image(
@@ -235,8 +232,8 @@ def make_video(
         "obs": observation key (string)\n
     """
     if not video_file.endswith(".mp4"):
-        video_file = video_file + ".mp4"
-    print("Encoding the video: %s " % video_file)
+        video_file += ".mp4"
+    print(f"Encoding the video: {video_file} ")
     writer = get_fast_video_writer(video_file, fps=fps)
     observation_to_image = partial(observation_to_image, depth_clip=depth_clip)
 

@@ -120,7 +120,7 @@ def simulate_with_moving_agent(
         mn.Deg(look_rotation_vel) * time_step, mn.Vector3(1.0, 0, 0)
     )
 
-    print("Simulating " + str(duration) + " world seconds.")
+    print(f"Simulating {str(duration)} world seconds.")
     observations = []
     start_time = sim.get_world_time()
     while sim.get_world_time() < start_time + duration:
@@ -288,7 +288,7 @@ if make_video_during_sim:
         observations,
         "rgba_camera",
         "color",
-        output_path + "episode",
+        f"{output_path}episode",
         open_vid=show_video,
     )
 
@@ -366,7 +366,7 @@ if make_video:
         observations,
         "rgba_camera",
         "color",
-        output_path + "replay_playback1",
+        f"{output_path}replay_playback1",
         open_vid=show_video,
     )
 
@@ -388,7 +388,7 @@ if make_video:
         observations,
         "rgba_camera",
         "color",
-        output_path + "replay_playback2",
+        f"{output_path}replay_playback2",
         open_vid=show_video,
     )
 
@@ -464,7 +464,7 @@ if make_video:
         observations,
         "rgba_camera",
         "color",
-        output_path + "replay_playback3",
+        f"{output_path}replay_playback3",
         open_vid=show_video,
     )
 
@@ -496,15 +496,13 @@ sensor_node.rotation = mn.Quaternion.rotation(mn.Deg(-115), mn.Vector3(0.0, 1.0,
 # we don't have make_image available in viz_utils. TODO: add make_image to
 # viz_utils.
 obs = sim.get_sensor_observations()
-for _ in range(10):
-    observations.append(obs)
-
+observations.extend(obs for _ in range(10))
 if make_video:
     vut.make_video(
         observations,
         "rgba_camera",
         "color",
-        output_path + "replay_playback4",
+        f"{output_path}replay_playback4",
         open_vid=show_video,
     )
 

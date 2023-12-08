@@ -199,7 +199,7 @@ def make_cfg(settings):
 
 
 def make_default_settings():
-    settings = {
+    return {
         "width": 1280,  # Spatial resolution of the observations
         "height": 720,
         "scene": "./data/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb",  # Scene path
@@ -213,7 +213,6 @@ def make_default_settings():
         "seed": 1,
         "enable_physics": built_with_bullet,  # enable dynamics simulation if bullet is present
     }
-    return settings
 
 
 def make_simulator_from_settings(sim_settings):
@@ -268,7 +267,7 @@ def make_simulator_from_settings(sim_settings):
 # first entry being the value and the second being whether the property is
 # editable and the third being the type.
 def build_dict_of_Default_attrs(template):
-    res_dict = {
+    return {
         "handle": (template.handle, True, "string"),
         # Read-only values
         "template_id": (template.template_id, False, "int"),
@@ -276,7 +275,6 @@ def build_dict_of_Default_attrs(template):
         "file_directory": (template.file_directory, False, "string"),
         "num_user_configs": (template.num_user_configs, False, "int"),
     }
-    return res_dict
 
 
 # This method builds a dictionary of k-v pairs of attribute property names and
@@ -470,8 +468,7 @@ def build_dict_of_Cone_prim_attrs(cone_template):
 # the first entry being the value,the second being whether the property is
 # editable and the third being the type.
 def build_dict_of_Cube_prim_attrs(cube_template):
-    res_dict = build_dict_of_prim_attrs(cube_template)
-    return res_dict
+    return build_dict_of_prim_attrs(cube_template)
 
 
 # This method will build a dict containing k-v pairs of attribute property names
@@ -499,8 +496,7 @@ def build_dict_of_Icosphere_prim_attrs(icosphere_template):
 # the first entry being the value,the second being whether the property is
 # editable and the third being the type.
 def build_dict_of_UVSphere_prim_attrs(uvsphere_template):
-    res_dict = build_dict_of_prim_attrs(uvsphere_template)
-    return res_dict
+    return build_dict_of_prim_attrs(uvsphere_template)
 
 
 # This method will deduce the appropriate template type and build the subsequent
@@ -528,7 +524,7 @@ def build_dict_from_template(template):
         return build_dict_of_Icosphere_prim_attrs(template)
     if "UVSpherePrimitiveAttributes" in template_class:
         return build_dict_of_UVSphere_prim_attrs(template)
-    print("Unknown template type : %s " % template_class)
+    print(f"Unknown template type : {template_class} ")
     return None
 
 
@@ -542,12 +538,10 @@ def set_template_properties_from_dict(template, template_dict):
 # This will display all the properties of an attributes template
 def show_template_properties(template):
     template_dict = build_dict_from_template(template)
-    print("Template {} has : ".format(template.handle))
+    print(f"Template {template.handle} has : ")
     for k, v in template_dict.items():
         print(
-            "\tProperty {} has value {} of type {} that is editable : {}".format(
-                k, v[0], v[2], v[1]
-            )
+            f"\tProperty {k} has value {v[0]} of type {v[2]} that is editable : {v[1]}"
         )
 
 
@@ -599,7 +593,7 @@ def on_prim_ddl_change(ddl_values):
 # Build a dropdown list holding obj_handles and set its event handler
 def set_handle_ddl_widget(obj_handles, handle_types, sel_handle, on_change):
     sel_handle = obj_handles[0]
-    descStr = handle_types + " Template Handles:"
+    descStr = f"{handle_types} Template Handles:"
     style = {"description_width": "300px"}
     obj_ddl = widgets.Dropdown(
         options=obj_handles,
@@ -615,11 +609,10 @@ def set_handle_ddl_widget(obj_handles, handle_types, sel_handle, on_change):
 
 
 def set_button_launcher(desc):
-    button = widgets.Button(
+    return widgets.Button(
         description=desc,
         layout={"width": "max-content"},
     )
-    return button
 
 
 def make_sim_and_vid_button(prefix, dt=1.0):
@@ -771,7 +764,7 @@ if os.path.exists(object_to_view_path) and os.path.isfile(object_to_view_path):
     initial_sensor_orientation = np.array(visual_sensor._spec.orientation)
 
     # load an object template and instantiate an object to view
-    object_template = obj_attr_mgr.create_new_template(str(object_to_view_path), False)
+    object_template = obj_attr_mgr.create_new_template(object_to_view_path, False)
     # if using a stage and it displays sideways, you may need to reorient it via its attributes for it to display properly.
 
     # @markdown If the asset being displayed is on its side, enable orientation_correction below :
@@ -833,7 +826,7 @@ if os.path.exists(object_to_view_path) and os.path.isfile(object_to_view_path):
         observations.append(sim.get_sensor_observations())
 
     # video rendering of carousel view
-    video_prefix = clip_short_name + "_scene_view"
+    video_prefix = f"{clip_short_name}_scene_view"
     if make_video:
         vut.make_video(
             observations,
@@ -853,9 +846,7 @@ if os.path.exists(object_to_view_path) and os.path.isfile(object_to_view_path):
     rigid_obj_mgr.remove_all_objects()
 else:
     print(
-        "\nChosen File : '{}' does not exist or cannot be found. Aborting.\n".format(
-            object_to_view_path
-        )
+        f"\nChosen File : '{object_to_view_path}' does not exist or cannot be found. Aborting.\n"
     )
 # [/build_carousel_view]
 # %%

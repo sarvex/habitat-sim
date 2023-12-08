@@ -34,7 +34,7 @@ def make_cfg(settings):
     agent_cfg = cfg.agents[0]
 
     if not settings["silent"]:
-        print("sim_cfg.physics_config_file = " + sim_cfg.physics_config_file)
+        print(f"sim_cfg.physics_config_file = {sim_cfg.physics_config_file}")
 
     # override action space to no-op to test physics
     if sim_cfg.enable_physics:

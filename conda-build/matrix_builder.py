@@ -140,7 +140,7 @@ def main():
         # including the commit hash in conda build string
         repo = git.Repo(search_parent_directories=True)
         sha = repo.head.object.hexsha
-        build_string += "_" + sha
+        build_string += f"_{sha}"
 
         env["HSIM_BUILD_STRING"] = build_string
 

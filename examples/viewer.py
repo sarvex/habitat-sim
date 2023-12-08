@@ -258,7 +258,7 @@ class HabitatSimInteractiveViewer(Application):
         # Agent actions should occur at a fixed rate per second
         self.time_since_last_simulation += Timer.prev_frame_duration
         num_agent_actions: int = self.time_since_last_simulation * agent_acts_per_sec
-        self.move_and_look(int(num_agent_actions))
+        self.move_and_look(num_agent_actions)
 
         # Occasionally a frame will pass quicker than 1/60 seconds
         if self.time_since_last_simulation >= 1.0 / self.fps:
@@ -330,14 +330,13 @@ class HabitatSimInteractiveViewer(Application):
             self.agent_id
         ].sensor_specifications
 
-        agent_config = habitat_sim.agent.AgentConfiguration(
+        return habitat_sim.agent.AgentConfiguration(
             height=1.5,
             radius=0.1,
             sensor_specifications=sensor_spec,
             action_space=action_space,
             body_type="cylinder",
         )
-        return agent_config
 
     def reconfigure_sim(self) -> None:
         """
@@ -362,8 +361,9 @@ class HabitatSimInteractiveViewer(Application):
 
         if self.sim is None:
             self.tiled_sims = []
-            for _i in range(self.num_env):
-                self.tiled_sims.append(habitat_sim.Simulator(self.cfg))
+            self.tiled_sims.extend(
+                habitat_sim.Simulator(self.cfg) for _i in range(self.num_env)
+            )
             self.sim = self.tiled_sims[0]
         else:  # edge case
             for i in range(self.num_env):
@@ -441,7 +441,7 @@ class HabitatSimInteractiveViewer(Application):
 
         action_queue: List[str] = [act[k] for k, v in press.items() if v]
 
-        for _ in range(int(repetitions)):
+        for _ in range(repetitions):
             [agent.act(x) for x in action_queue]
 
         # update the grabber transform when our agent is moved
@@ -486,21 +486,19 @@ class HabitatSimInteractiveViewer(Application):
                 inc = -1 if shift_pressed else 1
                 scene_ids = self.sim.metadata_mediator.get_scene_handles()
                 cur_scene_index = 0
-                if self.sim_settings["scene"] not in scene_ids:
-                    matching_scenes = [
-                        (ix, x)
-                        for ix, x in enumerate(scene_ids)
-                        if self.sim_settings["scene"] in x
-                    ]
-                    if not matching_scenes:
-                        logger.warning(
-                            f"The current scene, '{self.sim_settings['scene']}', is not in the list, starting cycle at index 0."
-                        )
-                    else:
-                        cur_scene_index = matching_scenes[0][0]
-                else:
+                if self.sim_settings["scene"] in scene_ids:
                     cur_scene_index = scene_ids.index(self.sim_settings["scene"])
 
+                elif matching_scenes := [
+                    (ix, x)
+                    for ix, x in enumerate(scene_ids)
+                    if self.sim_settings["scene"] in x
+                ]:
+                    cur_scene_index = matching_scenes[0][0]
+                else:
+                    logger.warning(
+                        f"The current scene, '{self.sim_settings['scene']}', is not in the list, starting cycle at index 0."
+                    )
                 next_scene_index = min(
                     max(cur_scene_index + inc, 0), len(scene_ids) - 1
                 )
@@ -619,12 +617,11 @@ class HabitatSimInteractiveViewer(Application):
             elif shift_pressed:
                 logger.info("Command: recompute navmesh")
                 self.navmesh_config_and_recompute()
+            elif self.sim.pathfinder.is_loaded:
+                self.sim.navmesh_visualization = not self.sim.navmesh_visualization
+                logger.info("Command: toggle navmesh")
             else:
-                if self.sim.pathfinder.is_loaded:
-                    self.sim.navmesh_visualization = not self.sim.navmesh_visualization
-                    logger.info("Command: toggle navmesh")
-                else:
-                    logger.warn("Warning: recompute navmesh first")
+                logger.warn("Warning: recompute navmesh first")
 
         # update map of moving/looking keys which are currently pressed
         if key in self.pressed:
@@ -700,9 +697,7 @@ class HabitatSimInteractiveViewer(Application):
                     ro_mngr = self.sim.get_rigid_object_manager()
                     ao_mngr = self.sim.get_articulated_object_manager()
                     ao = ao_mngr.get_object_by_id(hit_info.object_id)
-                    ro = ro_mngr.get_object_by_id(hit_info.object_id)
-
-                    if ro:
+                    if ro := ro_mngr.get_object_by_id(hit_info.object_id):
                         # if grabbed an object
                         hit_object = hit_info.object_id
                         object_pivot = ro.transformation.inverted().transform_point(
@@ -766,8 +761,8 @@ class HabitatSimInteractiveViewer(Application):
                         )
                     else:
                         logger.warn("Oops, couldn't find the hit object. That's odd.")
-                # end if didn't hit the scene
-            # end has raycast hit
+                        # end if didn't hit the scene
+                # end has raycast hit
         # end has physics enabled
 
         self.previous_mouse_point = self.get_mouse_position(event.position)

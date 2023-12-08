@@ -68,8 +68,6 @@ def make_configuration():
     # Note: all sensors must have the same resolution
     # setup 2 rgb sensors for 1st and 3rd person views
     camera_resolution = [544, 720]
-    sensor_specs = []
-
     rgba_camera_1stperson_spec = habitat_sim.CameraSensorSpec()
     rgba_camera_1stperson_spec.uuid = "rgba_camera_1stperson"
     rgba_camera_1stperson_spec.sensor_type = habitat_sim.SensorType.COLOR
@@ -77,8 +75,7 @@ def make_configuration():
     rgba_camera_1stperson_spec.position = [0.0, 0.6, 0.0]
     rgba_camera_1stperson_spec.orientation = [0.0, 0.0, 0.0]
     rgba_camera_1stperson_spec.sensor_subtype = habitat_sim.SensorSubType.PINHOLE
-    sensor_specs.append(rgba_camera_1stperson_spec)
-
+    sensor_specs = [rgba_camera_1stperson_spec]
     depth_camera_1stperson_spec = habitat_sim.CameraSensorSpec()
     depth_camera_1stperson_spec.uuid = "depth_camera_1stperson"
     depth_camera_1stperson_spec.sensor_type = habitat_sim.SensorType.DEPTH
@@ -106,7 +103,7 @@ def make_configuration():
 
 def simulate(sim, dt=1.0, get_frames=True):
     # simulate dt seconds at 60Hz to the nearest fixed timestep
-    print("Simulating " + str(dt) + " world seconds.")
+    print(f"Simulating {str(dt)} world seconds.")
     observations = []
     start_time = sim.get_world_time()
     while sim.get_world_time() < start_time + dt:

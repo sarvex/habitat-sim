@@ -61,7 +61,7 @@ def test_empty_scene():
     test_list = [hab_cfg, hab_cfg_mm]
     for ctor_arg in test_list:
         with habitat_sim.Simulator(ctor_arg) as sim:
-            assert sim.get_stage_initialization_template() == None
+            assert sim.get_stage_initialization_template() is None
 
             # test that empty frames can be rendered without a scene mesh
             for _ in range(2):

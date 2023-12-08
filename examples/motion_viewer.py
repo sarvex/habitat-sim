@@ -421,14 +421,14 @@ class FairmotionSimInteractiveViewer(HabitatSimInteractiveViewer):
             if not scroll_mod_val:
                 return
 
-            # use shift to scale action response
-            shift_pressed = event.modifiers == Application.InputEvent.Modifier.SHIFT
-
             if (
                 self.mouse_interaction == MouseMode.MOTION
                 and physics_enabled
                 and self.selected_mocap_char
             ):
+                # use shift to scale action response
+                shift_pressed = event.modifiers == Application.InputEvent.Modifier.SHIFT
+
                 delta = mn.Quaternion.rotation(
                     mn.Deg(scroll_mod_val * (1 if shift_pressed else 20)),
                     mn.Vector3.z_axis(),
@@ -767,10 +767,10 @@ if __name__ == "__main__":
     sim_settings["scene_dataset_config_file"] = args.dataset
     sim_settings["enable_physics"] = not args.disable_physics
 
-    fm_settings: Dict[str, Any] = {}
-    fm_settings["amass_path"] = args.amass_path
-    fm_settings["urdf_path"] = args.urdf_path
-    fm_settings["bm_path"] = args.bm_path
-    fm_settings["metadata_file"] = args.metadata_file
-
+    fm_settings: Dict[str, Any] = {
+        "amass_path": args.amass_path,
+        "urdf_path": args.urdf_path,
+        "bm_path": args.bm_path,
+        "metadata_file": args.metadata_file,
+    }
     FairmotionSimInteractiveViewer(sim_settings, fm_settings).exec()

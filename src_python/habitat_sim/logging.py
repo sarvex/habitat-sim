@@ -24,7 +24,7 @@ logger.setLevel(ERROR if LoggingContext.current().sim_is_quiet else INFO)
 
 def format_message(record: LogRecord) -> str:
     try:
-        record_message = "%s" % (record.msg % record.args)
+        record_message = f"{record.msg % record.args}"
     except TypeError:
         record_message = record.msg
     return record_message
@@ -32,7 +32,7 @@ def format_message(record: LogRecord) -> str:
 
 class HabitatSimFormatter(logging.Formatter):
     def format(self, record: LogRecord) -> str:
-        record_message = "[Sim] %s" % (format_message(record),)
+        record_message = f"[Sim] {format_message(record)}"
         record.getMessage = lambda: record_message  # type:ignore[assignment]
         return logging.Formatter.format(self, record)
 

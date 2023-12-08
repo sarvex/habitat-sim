@@ -186,8 +186,8 @@ def test_physics_object_attributes():
     object_template.collision_asset_handle = "collision_mesh"
     assert object_template.collision_asset_handle == "collision_mesh"
     object_template.bounding_box_collisions = True
-    assert object_template.bounding_box_collisions == True
+    assert object_template.bounding_box_collisions
     object_template.join_collision_meshes = False
-    assert object_template.join_collision_meshes == False
+    assert not object_template.join_collision_meshes
     object_template.force_flat_shading = True
-    assert object_template.force_flat_shading == True
+    assert object_template.force_flat_shading

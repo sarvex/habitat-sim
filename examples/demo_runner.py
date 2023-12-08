@@ -161,7 +161,6 @@ class DemoRunner:
         # access to objects
         rigid_obj_mgr = self._sim.get_rigid_object_manager()
         object_lib_size = obj_template_mgr.get_num_templates()
-        object_init_grid_dim = (3, 1, 3)
         object_init_grid = {}
         assert (
             object_lib_size > 0
@@ -170,6 +169,7 @@ class DemoRunner:
         # clear the objects if we are re-running this initializer
         rigid_obj_mgr.remove_all_objects()
 
+        object_init_grid_dim = (3, 1, 3)
         for _obj_id in range(num_objects):
             # rand_obj_index = random.randint(0, object_lib_size - 1)
             # rand_obj_index = 0  # overwrite for specific object only
@@ -198,14 +198,7 @@ class DemoRunner:
             )
             obj.translation = object_position + object_offset
             print(
-                "added object: "
-                + str(obj.object_id)
-                + " of type "
-                + str(rand_obj_index)
-                + " at: "
-                + str(object_position + object_offset)
-                + " | "
-                + str(object_init_cell)
+                f"added object: {str(obj.object_id)} of type {str(rand_obj_index)} at: {str(object_position + object_offset)} | {object_init_cell}"
             )
 
     def do_time_steps(self):
@@ -225,7 +218,7 @@ class DemoRunner:
             self.init_physics_test_scene(
                 num_objects=self._sim_settings.get("num_objects")
             )
-            print("active object names: " + str(rigid_obj_mgr.get_object_handles()))
+            print(f"active object names: {str(rigid_obj_mgr.get_object_handles())}")
 
         time_per_step = []
 
@@ -300,25 +293,26 @@ class DemoRunner:
         return perf
 
     def print_semantic_scene(self):
-        if self._sim_settings["print_semantic_scene"]:
-            scene = self._sim.semantic_scene
-            print(f"House center:{scene.aabb.center} dims:{scene.aabb.sizes}")
-            for level in scene.levels:
+        if not self._sim_settings["print_semantic_scene"]:
+            return
+        scene = self._sim.semantic_scene
+        print(f"House center:{scene.aabb.center} dims:{scene.aabb.sizes}")
+        for level in scene.levels:
+            print(
+                f"Level id:{level.id}, center:{level.aabb.center},"
+                f" dims:{level.aabb.sizes}"
+            )
+            for region in level.regions:
                 print(
-                    f"Level id:{level.id}, center:{level.aabb.center},"
-                    f" dims:{level.aabb.sizes}"
+                    f"Region id:{region.id}, category:{region.category.name()},"
+                    f" center:{region.aabb.center}, dims:{region.aabb.sizes}"
                 )
-                for region in level.regions:
+                for obj in region.objects:
                     print(
-                        f"Region id:{region.id}, category:{region.category.name()},"
-                        f" center:{region.aabb.center}, dims:{region.aabb.sizes}"
+                        f"Object id:{obj.id}, category:{obj.category.name()},"
+                        f" center:{obj.aabb.center}, dims:{obj.aabb.sizes}"
                     )
-                    for obj in region.objects:
-                        print(
-                            f"Object id:{obj.id}, category:{obj.category.name()},"
-                            f" center:{obj.aabb.center}, dims:{obj.aabb.sizes}"
-                        )
-            input("Press Enter to continue...")
+        input("Press Enter to continue...")
 
     def init_common(self):
         self._cfg = make_cfg(self._sim_settings)

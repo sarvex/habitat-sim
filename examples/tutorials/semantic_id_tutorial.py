@@ -71,16 +71,13 @@ def make_configuration(scene_file):
     # Note: all sensors must have the same resolution
     # setup rgb and semantic sensors
     camera_resolution = [1080, 960]
-    sensor_specs = []
-
     rgba_camera_spec = habitat_sim.CameraSensorSpec()
     rgba_camera_spec.uuid = "rgba_camera"
     rgba_camera_spec.sensor_type = habitat_sim.SensorType.COLOR
     rgba_camera_spec.resolution = camera_resolution
     rgba_camera_spec.position = [0.0, 1.5, 0.0]  # ::: fix y to be 0 later
     rgba_camera_spec.sensor_subtype = habitat_sim.SensorSubType.PINHOLE
-    sensor_specs.append(rgba_camera_spec)
-
+    sensor_specs = [rgba_camera_spec]
     semantic_camera_spec = habitat_sim.CameraSensorSpec()
     semantic_camera_spec.uuid = "semantic_camera"
     semantic_camera_spec.sensor_type = habitat_sim.SensorType.SEMANTIC
@@ -134,8 +131,7 @@ def main(show_imgs=True, save_imgs=False):
         )[0]
 
         # add 2 chairs with default semanticId == 0 and arrange them
-        chairs = []
-        chairs.append(rigid_obj_mgr.add_object_by_template_id(chair_template_id))
+        chairs = [rigid_obj_mgr.add_object_by_template_id(chair_template_id)]
         chairs.append(rigid_obj_mgr.add_object_by_template_id(chair_template_id))
 
         chairs[0].rotation = mn.Quaternion.rotation(mn.Deg(-115), mn.Vector3.y_axis())

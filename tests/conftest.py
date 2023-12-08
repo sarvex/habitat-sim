@@ -41,10 +41,12 @@ def make_cfg_settings():
 def pytest_report_header(config):
     del config  # unused
     output = ["C++ Build Info:"]
-    for setting in [
-        "audio_enabled",
-        "built_with_bullet",
-        "cuda_enabled",
-    ]:
-        output.append(f"--{setting}: {getattr(habitat_sim, setting)}")
+    output.extend(
+        f"--{setting}: {getattr(habitat_sim, setting)}"
+        for setting in [
+            "audio_enabled",
+            "built_with_bullet",
+            "cuda_enabled",
+        ]
+    )
     return output

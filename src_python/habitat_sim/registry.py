@@ -73,10 +73,7 @@ class _Registry:
 
             return controller
 
-        if controller is None:
-            return _wrapper
-
-        return _wrapper(controller)
+        return _wrapper if controller is None else _wrapper(controller)
 
     @classmethod
     def register_noise_model(
@@ -102,10 +99,7 @@ class _Registry:
 
             return noise_model
 
-        if noise_model is None:
-            return _wrapper
-
-        return _wrapper(noise_model)
+        return _wrapper if noise_model is None else _wrapper(noise_model)
 
     @classmethod
     def register_pose_extractor(
@@ -131,10 +125,7 @@ class _Registry:
 
             return pose_extractor
 
-        if pose_extractor is None:
-            return _wrapper
-
-        return _wrapper(pose_extractor)
+        return _wrapper if pose_extractor is None else _wrapper(pose_extractor)
 
     @classmethod
     def _get_impl(cls, _type, name: str):

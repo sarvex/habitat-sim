@@ -35,30 +35,3 @@ def test_semantic_scene(scene, make_cfg_settings):
     # disabling the test for now
     pytest.skip("Disabled")
     return
-    if not osp.exists(scene):
-        pytest.skip("Skipping {}".format(scene))
-
-    make_cfg_settings["semantic_sensor"] = False
-    make_cfg_settings["scene"] = scene
-    cfg = make_cfg(make_cfg_settings)
-    cfg.agents[0].sensor_specifications = []
-    sim = habitat_sim.Simulator(cfg)
-    # verify color map access
-    sim.semantic_color_map
-    scene = sim.semantic_scene
-    for obj in scene.objects:
-        obj.aabb
-        obj.aabb.sizes
-        obj.aabb.center
-        obj.id
-        obj.obb.rotation
-        obj.category.name()
-        obj.category.index()
-
-    for region in scene.regions:
-        region.id
-        region.category.name()
-        region.category.index()
-
-    for level in scene.levels:
-        level.id

@@ -59,162 +59,154 @@ def initialize_test_data_sources(data_path):
     """
     # dict keyed by uids with download specs for various individual test assets and datasets
     data_sources = {
-        # "example_uid": {
-        #   "source": the URL download link
-        #   "package_name": the filename of the downloaded compressed package
-        #   "download_pre_args": (optional)(wget) commands preceding filename
-        #   "download_post_args": (optional)(wget) commands follow filename
-        #   "link": symlink to the data directory pointing to the active version directory
-        #   "version": data version tag
-        # }
         "hssd-hab": {
             "source": "https://huggingface.co/datasets/hssd/hssd-hab.git",
-            "link": data_path + "scene_datasets/hssd-hab",
+            "link": f"{data_path}scene_datasets/hssd-hab",
             "version": "main",
             "requires_auth": False,
         },
         "hab3-episodes": {
             "source": "https://huggingface.co/datasets/ai-habitat/hab3_episodes.git",
-            "link": data_path + "datasets/hssd/rearrange/",
+            "link": f"{data_path}datasets/hssd/rearrange/",
             "version": "main",
             "requires_auth": False,
         },
         "hssd-raw": {
             "source": "https://huggingface.co/datasets/hssd/hssd-scenes.git",
-            "link": data_path + "scene_datasets/hssd-scenes",
+            "link": f"{data_path}scene_datasets/hssd-scenes",
             "version": "main",
             "requires_auth": True,
         },
         "hssd-hab_internal": {
             "source": "https://huggingface.co/datasets/fpss/fphab.git",
-            "link": data_path + "scene_datasets/fphab",
+            "link": f"{data_path}scene_datasets/fphab",
             "version": "main",
             "requires_auth": True,
         },
         "hssd-hab_objectnav_dataset": {
             "source": "https://www.dropbox.com/s/26ribfiup5249b8/objectnav_hssd-hab_v0.2.3.zip",
             "package_name": "objectnav_hssd-hab_v0.2.3.zip",
-            "link": data_path + "datasets/objectnav/hssd-hab",
+            "link": f"{data_path}datasets/objectnav/hssd-hab",
             "version": "v0.2.3",
         },
         "ai2thor-hab": {
             "source": "https://huggingface.co/datasets/hssd/ai2thor-hab.git",
-            "link": data_path + "scene_datasets/ai2thor-hab",
+            "link": f"{data_path}scene_datasets/ai2thor-hab",
             "version": "main",
             "requires_auth": True,
         },
         "procthor-hab_objectnav_dataset": {
             "source": "https://www.dropbox.com/s/mdfpevn1srr37cr/objectnav_procthor-hab.zip",
             "package_name": "objectnav_procthor-hab.zip",
-            "link": data_path + "datasets/objectnav/procthor-hab",
+            "link": f"{data_path}datasets/objectnav/procthor-hab",
             "version": "v1",
         },
         "habitat_test_scenes": {
             "source": "https://huggingface.co/datasets/ai-habitat/habitat_test_scenes.git",
-            "link": data_path + "scene_datasets/habitat-test-scenes",
+            "link": f"{data_path}scene_datasets/habitat-test-scenes",
             "version": "main",
         },
         "habitat_test_pointnav_dataset": {
             "source": "http://dl.fbaipublicfiles.com/habitat/habitat-test-pointnav-dataset_v1.0.zip",
             "package_name": "habitat-test-pointnav-dataset_v1.0.zip",
-            "link": data_path + "datasets/pointnav/habitat-test-scenes",
+            "link": f"{data_path}datasets/pointnav/habitat-test-scenes",
             "version": "1.0",
         },
         "habitat_example_objects": {
             "source": "http://dl.fbaipublicfiles.com/habitat/objects_v0.2.zip",
             "package_name": "objects_v0.2.zip",
-            "link": data_path + "objects/example_objects",
+            "link": f"{data_path}objects/example_objects",
             "version": "0.2",
         },
         "locobot_merged": {
             "source": "http://dl.fbaipublicfiles.com/habitat/locobot_merged_v0.2.zip",
             "package_name": "locobot_merged_v0.2.zip",
-            "link": data_path + "objects/locobot_merged",
+            "link": f"{data_path}objects/locobot_merged",
             "version": "0.2",
         },
         "mp3d_example_scene": {
             "source": "http://dl.fbaipublicfiles.com/habitat/mp3d/mp3d_example_v1.1.zip",
             "package_name": "mp3d_example_v1.1.zip",
-            "link": data_path + "scene_datasets/mp3d_example",
+            "link": f"{data_path}scene_datasets/mp3d_example",
             "version": "1.1",
         },
         "coda_scene": {
             "source": "https://dl.fbaipublicfiles.com/habitat/coda_v1.0.zip",
             "package_name": "coda_v1.0.zip",
             "download_pre_args": "--no-check-certificate ",
-            "download_post_args": " -O " + data_path + "coda_v1.0.zip",
-            "link": data_path + "scene_datasets/coda",
+            "download_post_args": f" -O {data_path}coda_v1.0.zip",
+            "link": f"{data_path}scene_datasets/coda",
             "version": "1.0",
         },
         "webxr_hand_demo": {
             "source": "https://dl.fbaipublicfiles.com/habitat/data/scene_datasets/webxr_hand_demo_data.zip",
             "package_name": "webxr_hand_demo_data.zip",
-            "link": data_path + "webxr_hand_demo_dataset",
+            "link": f"{data_path}webxr_hand_demo_dataset",
             "version": "1.0",
         },
         "replica_cad_dataset": {
             "source": "https://huggingface.co/datasets/ai-habitat/ReplicaCAD_dataset.git",
-            "link": data_path + "replica_cad",
+            "link": f"{data_path}replica_cad",
             "version": "v1.6",
         },
         "replica_cad_baked_lighting": {
             "source": "https://huggingface.co/datasets/ai-habitat/ReplicaCAD_baked_lighting.git",
-            "link": data_path + "replica_cad_baked_lighting",
+            "link": f"{data_path}replica_cad_baked_lighting",
             "version": "v1.6",
         },
         "ycb": {
             "source": "https://huggingface.co/datasets/ai-habitat/ycb.git",
-            "link": data_path + "objects/ycb",
+            "link": f"{data_path}objects/ycb",
             "version": "v1.2",
         },
         "franka_panda": {
             "source": "https://dl.fbaipublicfiles.com/polymetis/franka_panda.zip",
             "package_name": "franka_panda.zip",
-            "link": data_path + "robots/franka_panda",
+            "link": f"{data_path}robots/franka_panda",
             "version": "1.0",
         },
         "hab_spot_arm": {
             "source": "https://huggingface.co/datasets/ai-habitat/hab_spot_arm.git",
-            "link": data_path + "robots/hab_spot_arm",
+            "link": f"{data_path}robots/hab_spot_arm",
             "version": "v2.0",
         },
         "hab_stretch": {
             "source": "https://huggingface.co/datasets/ai-habitat/hab_stretch.git",
-            "link": data_path + "robots/hab_stretch",
+            "link": f"{data_path}robots/hab_stretch",
             "version": "v1.0",
         },
         "hab_fetch": {
             "source": "https://huggingface.co/datasets/ai-habitat/hab_fetch.git",
-            "link": data_path + "robots/hab_fetch",
+            "link": f"{data_path}robots/hab_fetch",
             "version": "v2.0",
         },
         "habitat_humanoids": {
             "source": "https://huggingface.co/datasets/ai-habitat/habitat_humanoids.git",
-            "link": data_path + "humanoids/humanoid_data",
+            "link": f"{data_path}humanoids/humanoid_data",
             "version": "main",
             "requires_auth": False,
         },
         "rearrange_pick_dataset_v0": {
             "source": "https://dl.fbaipublicfiles.com/habitat/data/datasets/rearrange_pick/replica_cad/v0/rearrange_pick_replica_cad_v0.zip",
             "package_name": "rearrange_pick_replica_cad_v0.zip",
-            "link": data_path + "datasets/rearrange_pick/replica_cad/v0",
+            "link": f"{data_path}datasets/rearrange_pick/replica_cad/v0",
             "version": "1.0",
         },
         "rearrange_dataset_v1": {
             "source": "https://dl.fbaipublicfiles.com/habitat/data/datasets/replica_cad/v1.zip",
             "package_name": "v1.zip",
-            "link": data_path + "datasets/replica_cad/rearrange",
+            "link": f"{data_path}datasets/replica_cad/rearrange",
             "version": "1.0",
         },
         "hab2_bench_assets": {
             "source": "https://dl.fbaipublicfiles.com/habitat/ReplicaCAD/hab2_bench_assets.zip",
             "package_name": "hab2_bench_assets.zip",
-            "link": data_path + "hab2_bench_assets",
+            "link": f"{data_path}hab2_bench_assets",
             "version": "1.0",
         },
         "hab3_bench_assets": {
             "source": "https://huggingface.co/datasets/ai-habitat/hab3_bench_assets.git",
-            "link": data_path + "hab3_bench_assets",
+            "link": f"{data_path}hab3_bench_assets",
             "version": "main",
             "requires_auth": False,
         },
@@ -238,7 +230,7 @@ def initialize_test_data_sources(data_path):
                     split=split,
                     data_format=data_format,
                 ),
-                "link": data_path + "scene_datasets/hm3d",
+                "link": f"{data_path}scene_datasets/hm3d",
                 "version": version,
                 "version_dir": "hm3d-{version}/hm3d",
                 "extract_postfix": f"{split}",
@@ -271,7 +263,7 @@ def initialize_test_data_sources(data_path):
                     data_format=data_format,
                     version_string="-v0.2" if data_format != "configs" else "",
                 ),
-                "link": data_path + "scene_datasets/hm3d",
+                "link": f"{data_path}scene_datasets/hm3d",
                 "version": "0.2",
                 "version_dir": "hm3d-{version}/hm3d",
                 "extract_postfix": "example",
@@ -286,19 +278,23 @@ def initialize_test_data_sources(data_path):
         {
             f"hm3d_{split}_semantic_{data_format}_v{version}": {
                 "source": "https://api.matterport.com/resources/habitat/hm3d-{split}-semantic-{data_format}-v{version_string}.tar{ext}".format(
-                    ext=".gz" if (version == "0.1" and data_format == "annots") else "",
+                    ext=".gz"
+                    if (version == "0.1" and data_format == "annots")
+                    else "",
                     split=split,
                     data_format=data_format,
                     version_string=version,
                 ),
                 "download_pre_args": "--location",
                 "package_name": "hm3d-{split}-semantic-{data_format}-v{version_string}.tar{ext}".format(
-                    ext=".gz" if (version == "0.1" and data_format == "annots") else "",
+                    ext=".gz"
+                    if (version == "0.1" and data_format == "annots")
+                    else "",
                     split=split,
                     data_format=data_format,
                     version_string=version,
                 ),
-                "link": data_path + "scene_datasets/hm3d",
+                "link": f"{data_path}scene_datasets/hm3d",
                 "version": version,
                 "version_dir": "hm3d-{version}/hm3d",
                 "extract_postfix": f"{split}",
@@ -310,7 +306,9 @@ def initialize_test_data_sources(data_path):
                 else None,
             }
             for split, data_format, version in itertools.product(
-                ["minival", "train", "val"], ["annots", "configs"], ["0.1", "0.2"]
+                ["minival", "train", "val"],
+                ["annots", "configs"],
+                ["0.1", "0.2"],
             )
         }
     )
@@ -327,7 +325,7 @@ def initialize_test_data_sources(data_path):
                     ext="",
                     data_format=data_format,
                 ),
-                "link": data_path + "scene_datasets/hm3d",
+                "link": f"{data_path}scene_datasets/hm3d",
                 "version": "0.2",
                 "version_dir": "hm3d-{version}/hm3d",
                 "extract_postfix": "example",
@@ -368,50 +366,34 @@ def initialize_test_data_sources(data_path):
 
     # add all hm3d variations splits + versions
     for version in ["v0.1", "v0.2"]:
-        data_groups.update(
-            {
-                f"hm3d_val_{version}": [
-                    f"hm3d_val_habitat_{version}",
-                    f"hm3d_val_configs_{version}",
-                    f"hm3d_val_semantic_annots_{version}",
-                    f"hm3d_val_semantic_configs_{version}",
-                ],
-            }
-        )
-        data_groups.update(
-            {
-                f"hm3d_train_{version}": [
-                    f"hm3d_train_habitat_{version}",
-                    f"hm3d_train_configs_{version}",
-                    f"hm3d_train_semantic_annots_{version}",
-                    f"hm3d_train_semantic_configs_{version}",
-                ],
-            }
-        )
-        data_groups.update(
-            {
-                f"hm3d_minival_{version}": [
-                    f"hm3d_minival_habitat_{version}",
-                    f"hm3d_minival_configs_{version}",
-                    f"hm3d_minival_semantic_annots_{version}",
-                    f"hm3d_minival_semantic_configs_{version}",
-                ]
-            }
-        )
-        data_groups.update(
-            {
-                f"hm3d_semantics_{version}": [
-                    f"hm3d_example_semantic_annots_{version}",
-                    f"hm3d_example_semantic_configs_{version}",
-                    f"hm3d_val_semantic_annots_{version}",
-                    f"hm3d_val_semantic_configs_{version}",
-                    f"hm3d_train_semantic_annots_{version}",
-                    f"hm3d_train_semantic_configs_{version}",
-                    f"hm3d_minival_semantic_annots_{version}",
-                    f"hm3d_minival_semantic_configs_{version}",
-                ]
-            }
-        )
+        data_groups[f"hm3d_val_{version}"] = [
+            f"hm3d_val_habitat_{version}",
+            f"hm3d_val_configs_{version}",
+            f"hm3d_val_semantic_annots_{version}",
+            f"hm3d_val_semantic_configs_{version}",
+        ]
+        data_groups[f"hm3d_train_{version}"] = [
+            f"hm3d_train_habitat_{version}",
+            f"hm3d_train_configs_{version}",
+            f"hm3d_train_semantic_annots_{version}",
+            f"hm3d_train_semantic_configs_{version}",
+        ]
+        data_groups[f"hm3d_minival_{version}"] = [
+            f"hm3d_minival_habitat_{version}",
+            f"hm3d_minival_configs_{version}",
+            f"hm3d_minival_semantic_annots_{version}",
+            f"hm3d_minival_semantic_configs_{version}",
+        ]
+        data_groups[f"hm3d_semantics_{version}"] = [
+            f"hm3d_example_semantic_annots_{version}",
+            f"hm3d_example_semantic_configs_{version}",
+            f"hm3d_val_semantic_annots_{version}",
+            f"hm3d_val_semantic_configs_{version}",
+            f"hm3d_train_semantic_annots_{version}",
+            f"hm3d_train_semantic_configs_{version}",
+            f"hm3d_minival_semantic_annots_{version}",
+            f"hm3d_minival_semantic_configs_{version}",
+        ]
 
     # to reproduce old experiments with hm3d v1.0 and hm3d semantics v0.1
     data_groups["hm3d_v0.1"] = (
@@ -421,17 +403,13 @@ def initialize_test_data_sources(data_path):
     )
 
     # this download is all of hm3d v0.2 + all examples in both original glb and BASIS compressed formats
-    data_groups.update(
-        {
-            "hm3d_full": list(
-                filter(
-                    lambda k: (
-                        k.startswith("hm3d_") and ("v0.2" in k or "example" in k)
-                    ),
-                    data_sources.keys(),
-                )
-            )
-        }
+    data_groups["hm3d_full"] = list(
+        filter(
+            lambda k: (
+                k.startswith("hm3d_") and ("v0.2" in k or "example" in k)
+            ),
+            data_sources.keys(),
+        )
     )
 
     # add full (glb + BASIS) downloads for v0.2 grouped by split
@@ -480,18 +458,15 @@ def get_version_dir(uid, data_path, is_repo=False):
     version_tag = data_sources[uid]["version"]
     if is_repo:
         # this is a git repo, so don't include version in the directory name
-        version_dir = os.path.join(data_path, "versioned_data/" + uid)
+        return os.path.join(data_path, f"versioned_data/{uid}")
     elif "version_dir" in data_sources[uid]:
-        version_dir = os.path.join(
+        return os.path.join(
             data_path,
             "versioned_data",
             data_sources[uid]["version_dir"].format(version=version_tag),
         )
     else:
-        version_dir = os.path.join(
-            data_path, "versioned_data/" + uid + "_" + version_tag
-        )
-    return version_dir
+        return os.path.join(data_path, f"versioned_data/{uid}_{version_tag}")
 
 
 def get_downloaded_file_list(uid: str, data_path: str) -> Optional[str]:
@@ -499,14 +474,17 @@ def get_downloaded_file_list(uid: str, data_path: str) -> Optional[str]:
     Get the downloaded file list path configured for the data source.
     """
     version_tag = data_sources[uid]["version"]
-    downloaded_file_list = None
-    if "downloaded_file_list" in data_sources[uid]:
-        downloaded_file_list = os.path.join(
+    return (
+        os.path.join(
             data_path,
             "versioned_data",
-            data_sources[uid]["downloaded_file_list"].format(version=version_tag),
+            data_sources[uid]["downloaded_file_list"].format(
+                version=version_tag
+            ),
         )
-    return downloaded_file_list
+        if "downloaded_file_list" in data_sources[uid]
+        else None
+    )
 
 
 def clean_data(uid, data_path):
@@ -626,15 +604,12 @@ def get_and_place_compressed_package(
     """
     download_pre_args = data_sources[uid].get("download_pre_args", "")
     download_post_args = data_sources[uid].get("download_post_args", "")
-    use_curl = data_sources[uid].get("use_curl", False)
-    if use_curl:
+    if use_curl := data_sources[uid].get("use_curl", False):
         if requires_auth:
             download_pre_args = f"{download_pre_args} --user {username}:{password}"
 
         download_command = (
-            "curl --continue-at - "
-            + download_pre_args
-            + " "
+            f"curl --continue-at - {download_pre_args} "
             + data_sources[uid]["source"]
             + " -o "
             + os.path.join(data_path, data_sources[uid]["package_name"])
@@ -647,8 +622,7 @@ def get_and_place_compressed_package(
             )
 
         download_command = (
-            "wget --continue "
-            + download_pre_args
+            f"wget --continue {download_pre_args}"
             + data_sources[uid]["source"]
             + " -P "
             + data_path
@@ -889,12 +863,12 @@ def main(args):
         exit(2)
 
     # initialize data_sources and data_groups with test and example assets
-    data_path = os.path.abspath(data_path) + "/"
+    data_path = f"{os.path.abspath(data_path)}/"
     initialize_test_data_sources(data_path=data_path)
 
     # validation: ids are unique between groups and sources
     for key in data_groups:
-        assert key not in data_sources, "Duplicate key: " + key
+        assert key not in data_sources, f"Duplicate key: {key}"
 
     if args.list:
         print("====================================")

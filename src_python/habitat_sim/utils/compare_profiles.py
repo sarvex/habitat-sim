@@ -88,9 +88,7 @@ def get_sqlite_events(conn: Connection) -> List[Event]:
     # select events
     cursor = conn.execute("SELECT text, globalTid, start, end from NVTX_EVENTS")
 
-    for row in cursor:
-        events.append(Event(*row))
-
+    events.extend(Event(*row) for row in cursor)
     return events
 
 
@@ -136,7 +134,7 @@ def create_summary_from_events(events: List[Event]) -> DefaultDict[str, SummaryI
                     filter(lambda t: t > current_time, child_end_times)
                 )
 
-                if len(child_end_times) == 0:
+                if not child_end_times:
                     recent_exclusive_start_time = latest_child_end_time
                 else:
                     recent_exclusive_start_time = None
@@ -274,11 +272,8 @@ def print_summaries(
 
 def get_sqlite_filepaths_from_directory(directory):
     """Returns a list of filepaths."""
-    filepaths = []
     os.chdir(directory)
-    for filepath in glob.glob("*.sqlite"):
-        filepaths.append(filepath)
-    return filepaths
+    return list(glob.glob("*.sqlite"))
 
 
 def create_arg_parser() -> ArgumentParser:

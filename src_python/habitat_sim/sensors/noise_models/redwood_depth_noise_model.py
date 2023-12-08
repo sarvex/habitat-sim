@@ -38,10 +38,7 @@ def _undistort(x, y, z, model):
     y = y // 6
     f = (1.0 - a) * model[y, x, min(max(i1, 0), 4)] + a * model[y, x, min(i2, 4)]
 
-    if f < 1e-5:
-        return 0.0
-
-    return z / f
+    return 0.0 if f < 1e-5 else z / f
 
 
 @numba.jit(nopython=True, parallel=True, fastmath=True)
@@ -89,11 +86,7 @@ def _simulate(gt_depth, model, noise_multiplier):
                         )
                         * 8.0
                     )
-                    if denom <= 1e-5:
-                        noisy_depth[j, i] = 0.0
-                    else:
-                        noisy_depth[j, i] = 35.130 * 8.0 / denom
-
+                    noisy_depth[j, i] = 0.0 if denom <= 1e-5 else 35.130 * 8.0 / denom
     return noisy_depth
 
 
@@ -131,17 +124,16 @@ class RedwoodDepthNoiseModel(SensorNoiseModel):
         return sensor_type == SensorType.DEPTH
 
     def simulate(self, gt_depth: Union[ndarray, "Tensor"]) -> Union[ndarray, "Tensor"]:
-        if cuda_enabled:
-            if isinstance(gt_depth, np.ndarray):
-                return self._impl.simulate_from_cpu(gt_depth)
-            noisy_depth = torch.empty_like(gt_depth)
-            rows, cols = gt_depth.size()
-            self._impl.simulate_from_gpu(
-                gt_depth.data_ptr(), rows, cols, noisy_depth.data_ptr()  # type: ignore[attr-defined]
-            )
-            return noisy_depth
-        else:
+        if not cuda_enabled:
             return self._impl.simulate(gt_depth)
+        if isinstance(gt_depth, np.ndarray):
+            return self._impl.simulate_from_cpu(gt_depth)
+        noisy_depth = torch.empty_like(gt_depth)
+        rows, cols = gt_depth.size()
+        self._impl.simulate_from_gpu(
+            gt_depth.data_ptr(), rows, cols, noisy_depth.data_ptr()  # type: ignore[attr-defined]
+        )
+        return noisy_depth
 
     def apply(self, gt_depth: Union[ndarray, "Tensor"]) -> Union[ndarray, "Tensor"]:
         r"""Alias of `simulate()` to conform to base-class and expected API"""

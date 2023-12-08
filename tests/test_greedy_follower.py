@@ -48,10 +48,7 @@ if test_all and osp.exists(mp3d_example_base):
 
 @pytest.fixture(scope="module")
 def pbar():
-    if test_all:
-        return tqdm.tqdm(total=len(test_navmeshes) * NUM_TESTS)
-    else:
-        return None
+    return tqdm.tqdm(total=len(test_navmeshes) * NUM_TESTS) if test_all else None
 
 
 num_fails = 0.0
@@ -86,7 +83,7 @@ def test_greedy_follower(test_navmesh, move_filter_fn, action_noise, pbar):
     if action_noise:
         # "_" prefix the perfect actions so that we can use noisy actions instead
         agent.agent_config.action_space = {
-            "_" + k: v for k, v in agent.agent_config.action_space.items()
+            f"_{k}": v for k, v in agent.agent_config.action_space.items()
         }
 
         agent.agent_config.action_space.update(

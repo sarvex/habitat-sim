@@ -110,7 +110,7 @@ def test_configure_and_on_start_step():
     # Use mock range_push/range_pop. This test only looks to confirm that these
     # functions get called at the right time.
     def fake_range_push(msg):
-        print("range_push " + msg)
+        print(f"range_push {msg}")
 
     def fake_range_pop():
         print("range_pop")

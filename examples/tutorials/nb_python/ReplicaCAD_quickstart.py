@@ -113,8 +113,6 @@ def make_cfg(settings):
     if "scene_light_setup" in settings:
         sim_cfg.scene_light_setup = settings["scene_light_setup"]
 
-    # Note: all sensors must have the same resolution
-    sensor_specs = []
     color_sensor_1st_person_spec = habitat_sim.CameraSensorSpec()
     color_sensor_1st_person_spec.uuid = "color_sensor_1st_person"
     color_sensor_1st_person_spec.sensor_type = habitat_sim.SensorType.COLOR
@@ -129,8 +127,7 @@ def make_cfg(settings):
         0.0,
     ]
     color_sensor_1st_person_spec.sensor_subtype = habitat_sim.SensorSubType.PINHOLE
-    sensor_specs.append(color_sensor_1st_person_spec)
-
+    sensor_specs = [color_sensor_1st_person_spec]
     # Here you can specify the amount of displacement in a forward action and the turn angle
     agent_cfg = habitat_sim.agent.AgentConfiguration()
     agent_cfg.sensor_specifications = sensor_specs
@@ -139,7 +136,7 @@ def make_cfg(settings):
 
 
 def make_default_settings():
-    settings = {
+    return {
         "width": 1280,  # Spatial resolution of the observations
         "height": 720,
         "scene_dataset": "data/replica_cad/replicaCAD.scene_dataset_config.json",  # dataset path
@@ -150,7 +147,6 @@ def make_default_settings():
         "seed": 1,
         "enable_physics": True,  # enable dynamics simulation
     }
-    return settings
 
 
 def make_simulator_from_settings(sim_settings):
@@ -234,11 +230,10 @@ def set_handle_ddl_widget(scene_handles, sel_handle, on_change):
 
 
 def set_button_launcher(desc):
-    button = widgets.Button(
+    return widgets.Button(
         description=desc,
         layout={"width": "max-content"},
     )
-    return button
 
 
 # Builds widget-based UI components

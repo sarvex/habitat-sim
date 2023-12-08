@@ -121,8 +121,7 @@ def print_metric(
     for nproc, performance in performance_all.items():
         header = f" Performance ({metric}) NPROC={nproc} "
         print(f"{header:=^100}")
-        title = "Resolution".ljust(16)
-        title += "".join(t.ljust(24) for t in title_list)
+        title = "Resolution".ljust(16) + "".join(t.ljust(24) for t in title_list)
         print(title)
         # break down by resolutions
         for resolution, perf in zip(resolutions, performance):
@@ -150,8 +149,7 @@ def get_csv_data(
         metric_transformer = {}
     fields = ["num_procs", "resolution", "sensor_types"]
     for metric in metrics:
-        fields.append(f"{metric}_control")
-        fields.append(f"{metric}_test")
+        fields.extend((f"{metric}_control", f"{metric}_test"))
     rows = []
 
     for nproc, performance in performance_all.items():
@@ -213,10 +211,10 @@ default_settings["compute_action_shortest_path"] = False
 default_settings["max_frames"] = args.max_frames
 
 # set the control value into the default setting
-if control_val != None:
-    default_settings[args.feature] = control_val
-else:
+if control_val is None:
     control_val = default_settings[args.feature]
+else:
+    default_settings[args.feature] = control_val
 print(
     f"==== feature {args.feature}, control value: {control_val}, test value: {test_val} ===="
 )

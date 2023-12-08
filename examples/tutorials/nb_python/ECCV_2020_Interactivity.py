@@ -199,7 +199,7 @@ def make_cfg(settings):
 
 
 def make_default_settings():
-    settings = {
+    return {
         "width": 720,  # Spatial resolution of the observations
         "height": 544,
         "scene": "./data/scene_datasets/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb",  # Scene path
@@ -214,7 +214,6 @@ def make_default_settings():
         "seed": 1,
         "enable_physics": True,  # enable dynamics simulation
     }
-    return settings
 
 
 def make_simulator_from_settings(sim_settings):
@@ -250,7 +249,7 @@ def make_simulator_from_settings(sim_settings):
 
 def simulate(sim, dt=1.0, get_frames=True):
     # simulate dt seconds at 60Hz to the nearest fixed timestep
-    print("Simulating " + str(dt) + " world seconds.")
+    print(f"Simulating {str(dt)} world seconds.")
     observations = []
     start_time = sim.get_world_time()
     while sim.get_world_time() < start_time + dt:
@@ -329,9 +328,7 @@ def sample_object_state(
         if not sim.contact_test(obj.object_id):
             valid_placement = True
 
-    if not valid_placement:
-        return False
-    return True
+    return valid_placement
 
 
 # %%
@@ -423,7 +420,7 @@ def on_prim_ddl_change(ddl_values):
 # Build a dropdown list holding obj_handles and set its event handler
 def set_handle_ddl_widget(obj_handles, handle_types, sel_handle, on_change):
     sel_handle = obj_handles[0]
-    descStr = handle_types + " Template Handles:"
+    descStr = f"{handle_types} Template Handles:"
     style = {"description_width": "300px"}
     obj_ddl = widgets.Dropdown(
         options=obj_handles,
@@ -439,11 +436,10 @@ def set_handle_ddl_widget(obj_handles, handle_types, sel_handle, on_change):
 
 
 def set_button_launcher(desc):
-    button = widgets.Button(
+    return widgets.Button(
         description=desc,
         layout={"width": "max-content"},
     )
-    return button
 
 
 def make_sim_and_vid_button(prefix, dt=1.0):
